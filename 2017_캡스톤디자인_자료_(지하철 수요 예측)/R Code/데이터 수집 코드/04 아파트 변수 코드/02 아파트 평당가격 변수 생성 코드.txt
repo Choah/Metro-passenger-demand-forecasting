@@ -1,0 +1,218 @@
+#============================================
+# 부동산 실거래가 변수 생성 :: house
+#============================================
+setwd("D:/Project/캡스톤디자인 프로젝트/Working Directory/subway")
+# 패키지 라이브러리
+
+library(dplyr)
+library(ggmap)
+library(ggplot2)
+library(NISTunits)
+
+# 지하철 역 데이터 불러오기
+subway_all_set <- read.csv("bigdata_02.csv", header=T, stringsAsFactors = F)
+
+# 실거래가 데이터 불러오기
+house <- read.csv("실거래가/house_size.csv", header=T, stringsAsFactors = F)
+total_house <- read.csv("실거래가/total_house.csv", header=T,stringsAsFactors = F)
+
+# ---------------------------------------------------
+# total_house 생성 코드 (평당 가격 total_house_norm)
+# ---------------------------------------------------
+
+house$평 <- house$전용면적...*0.3025
+house$평당가격 <- (house$price) / (house$평)
+
+
+house$address <- paste(house$시군구,house$단지명,sep=" ")
+total_house <-house %>% group_by(address) %>% summarise(mean = mean(평당가격))
+
+write.csv(total_house, "실거래가/total_house_norm.csv", row.names=F)
+
+summary(total_house$mean)
+
+#----------------------------------------------------
+gc_1000 <- read.csv("실거래가/gc_1000.csv", header=T, stringsAsFactors=F)
+gc_2000 <- read.csv("실거래가/gc_2000.csv", header=T, stringsAsFactors=F)
+gc_3000 <- read.csv("실거래가/gc_3000.csv", header=T, stringsAsFactors=F)
+gc_4000 <- read.csv("실거래가/gc_4000.csv", header=T, stringsAsFactors=F)
+gc_5000 <- read.csv("실거래가/gc_5000.csv", header=T, stringsAsFactors=F)
+gc_6000 <- read.csv("실거래가/gc_6000.csv", header=T, stringsAsFactors=F)
+gc_7000 <- read.csv("실거래가/gc_7000.csv", header=T, stringsAsFactors=F)
+gc_8000 <- read.csv("실거래가/gc_8000.csv", header=T, stringsAsFactors=F)
+gc_9000 <- read.csv("실거래가/gc_9000.csv", header=T, stringsAsFactors=F)
+gc_10500 <- read.csv("실거래가/gc_10500.csv", header=T, stringsAsFactors=F)
+gc_12000 <- read.csv("실거래가/gc_12000.csv", header=T, stringsAsFactors=F)
+gc_13000 <- read.csv("실거래가/gc_13000.csv", header=T, stringsAsFactors=F)
+gc_14000 <- read.csv("실거래가/gc_14000.csv", header=T, stringsAsFactors=F)
+gc_15013 <- read.csv("실거래가/gc_15013.csv", header=T, stringsAsFactors=F)
+
+
+# 좌표 정보 결측치 확인
+sum(is.na(gc_1000$lon))
+
+
+#
+word <- enc2utf8(total_house$address)
+word_temp<-word[7001:8000]
+#
+gc <- geocode(word_temp)
+
+sum(is.na(gc[,1]))
+
+word_temp2<-word_temp[is.na(gc[,1])]
+word_temp2 <- paste(word_temp2, "아파트")
+gc2 <- geocode(word_temp2)
+
+gc[is.na(gc[,1]),] <- gc2
+
+###
+gc_8000 <- gc
+
+
+
+
+
+
+
+##################################
+
+# house_gc 생성
+
+##################################
+# 최초에 한 번만 만들기
+# house_gc <- rbind(gc_1000, gc_2000, gc_3000, gc_4000, gc_5000, gc_6000, gc_7000, gc_8000, gc_9000, gc_10500, gc_12000, gc_13000, gc_14000, gc_15013)
+# write.csv(house_gc, "실거래가/house_gc.csv", row.names=F)
+
+
+total_house <- read.csv("실거래가/total_house_norm.csv", header=T,stringsAsFactors = F)
+house_gc <- read.csv("실거래가/house_gc.csv", header=T, stringsAsFactors=F)
+
+# house_gc 결측치 채우기
+sum(is.na(house_gc$lon))
+
+word <- total_house$address[is.na(house_gc$lon)]
+word <- enc2utf8(word)
+word <- paste(word, "아파트", sep=" ")
+
+gc_temp <- geocode(word)
+
+house_gc[is.na(house_gc[,1]),] <- gc_temp
+
+
+# house_gc 갱신하여 저장하기
+write.csv(house_gc, "실거래가/house_gc.csv", row.names=F)
+
+####################################
+# 실거래 데이터 결측치 삭제
+####################################
+
+total_house_norm<-read.csv("실거래가/total_house_norm.csv",header=T, stringsAsFactor=F)
+house_gc <- read.csv("실거래가/house_gc.csv", header=T, stringsAsFactors=F)
+
+house_all <- cbind(total_house_norm, house_gc)
+house_all_1 <- na.omit(house_all)
+
+write.csv(house_all_1, "실거래가/house_all_1_norm.csv", row.names=F)
+
+
+####################
+####################
+####################
+
+subway_all_set <- read.csv("bigdata_02.csv", header=T, stringsAsFactors=F)
+house_all_1 <- read.csv("실거래가/house_all_1_norm.csv", header=T, stringsAsFactors=F)
+
+# 실거래가 카운팅 프로그램 
+
+library(dplyr)
+
+var <- house_all_1
+var <- var %>% group_by(lon, lat, mean) %>% summarise(a = sum(lon))
+var <- data.frame(lon=var$lon, lat=var$lat, mean=var$mean)
+
+# 지구 반지름 r (단위:km) 위키백과 기준
+r=6378.137
+# 지하철 역 좌표
+lon1<-NISTdegTOradian(subway_all_set$lon)
+lat1<-NISTdegTOradian(subway_all_set$lat)
+# 상가 좌표
+lon2<-NISTdegTOradian(var$lon)
+lat2<-NISTdegTOradian(var$lat)
+
+
+#=================================
+# var_n15 :: 최근접 28개 평당 가격
+#=================================
+
+var_n17 <- NA
+for (i in (1:length(subway_all_set[,1]))) {
+  print(i)
+  
+  dlon<-lon2-lon1[i]
+  dlat<-lat2-lat1[i]
+  
+  a<-sin(dlat/2)^2+cos(lat1[i])*cos(lat2)*sin(dlon/2)^2
+  c<-2*atan2(sqrt(a),sqrt(1-a))
+  distance <- r*c 
+  
+  index <- sort(distance, index.return=T)$ix[1:28]
+  
+  var_n17[i] <- 
+    mean(var[index, 3])
+}
+
+# 데이터 셋에 변수 추가
+subway_all_set <- cbind(subway_all_set, var_n17)
+
+
+
+###################################
+# 변수 선택하기 k 정하기
+###################################
+#==================================
+# var_n16~ :: 최근접 k 개 평당 가격
+#==================================
+
+temp <- read.csv("bigdata_02.csv", header = T, stringsAsFactors = F)
+temp <- temp[, c(1,2,5)]
+for (j in (1:30)){
+  
+  var <- NA
+  for (i in (1:length(subway_all_set[,1]))) {
+    print(i)
+    
+    dlon<-lon2-lon1[i]
+    dlat<-lat2-lat1[i]
+    
+    a<-sin(dlat/2)^2+cos(lat1[i])*cos(lat2)*sin(dlon/2)^2
+    c<-2*atan2(sqrt(a),sqrt(1-a))
+    distance <- r*c 
+    
+    index <- sort(distance, index.return=T)$ix[1:j]
+    
+    var[i] <- 
+      mean(var[index, 3])
+  }
+  
+  
+  # 
+  temp <- cbind(temp, var)
+  colnames(temp)[3+j] <- paste("var_n", j, sep="")
+}
+
+
+
+write.csv(temp, "D:/temp.csv", row.names = F)
+
+####################################################################
+
+
+####
+
+
+write.csv(subway_all_set, "bigdata_03.csv", row.names = F)
+
+
+
+

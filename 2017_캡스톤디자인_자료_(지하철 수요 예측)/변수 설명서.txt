@@ -1,0 +1,32 @@
+
+* 변수 설명서
+
+01 [factor] index : 지역 (1:서울 수도권,2:대구, 3:부산, 4:의정부, 5:광주, 6:대전, 7:용인)
+02 [character] station_nm : 지하철 역 이름
+03 [numeric] lon : 경도
+04 [numeric] lat : 위도
+05 [integer] user : 하루 평균 지하철 역 이용자 수 (16년도 기준)
+
+06 [integer] var_n1  : [상가점포] 음식
+07 [integer] var_n2  : [상가점포] 생활서비스
+08 [integer] var_n3  : [상가점포] 소매
+09 [integer] var_n4  : [상가점포] 관광/여가/오락
+10 [integer] var_n5  : [상가점포] 학문/교육
+11 [integer] var_n6  : [상가점포] 의료
+12 [integer] var_n7  : [상가점포] 부동산
+13 [integer] var_n8  : [상가점포] 숙박
+
+14 [integer] var_n9  : [공공시설] 초중등학교
+15 [integer] var_n10 : [공공시설]금연구역
+16 [integer] var_n11 : [공공시설] 공공도서관
+17 [integer] var_n12 : [공공시설] 박물관/미술관
+18 [integer] var_n13 : [공공시설] 도시공원
+19 [integer] var_n14 : [공공시설] 주차장
+20 [integer] var_n15 : [공공시설] 무료와이파이존
+21 [integer] var_n16 : [공공시설] CCTV설치장소
+
+22 [numeric] var_n17 : 아파트 실거래 평당 가격 (전용면적 59~85m^2 기준)
+
+
+
+

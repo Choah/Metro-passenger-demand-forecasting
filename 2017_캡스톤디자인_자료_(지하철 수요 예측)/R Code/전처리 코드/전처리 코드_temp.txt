@@ -1,0 +1,138 @@
+#======================================
+#
+# Data Preprocessing
+#
+#======================================
+
+library(ggplot2)
+library(RColorBrewer)
+library(dplyr)
+
+# RColorBrewer 패키지
+display.brewer.all(n=10, exact.n=FALSE)
+
+# WD Setting
+setwd("D:/Project/캡스톤디자인 프로젝트/Working Directory/subway")
+getwd()
+
+# Dataset
+subway <- read.csv("bigdata_03.csv", header = T, stringsAsFactors = F)
+str(subway)
+
+# Type 변경
+subway$index <- as.factor(subway$index) # int -> factor
+str(subway)
+
+#======================================
+# 기술통계
+#======================================
+#======================================
+# 단일 변수 분석
+#======================================
+ggplot(data=subway, aes(x=index, y=var_n1))+
+  geom_boxplot(fill='slategrey',color='darkslategrey',width=0.3)
+
+ggplot(data=subway, aes(x=index, y=var_n2))+
+  geom_boxplot(fill='slategrey',color='darkslategrey',width=0.3)
+
+ggplot(data=subway, aes(x=index, y=var_n3))+
+  geom_boxplot(fill='slategrey',color='darkslategrey',width=0.3)
+
+ggplot(data=subway, aes(x=index, y=var_n4))+
+  geom_boxplot(fill='slategrey',color='darkslategrey',width=0.3)
+
+ggplot(data=subway, aes(x=index, y=var_n5))+
+  geom_boxplot(fill='slategrey',color='darkslategrey',width=0.3)
+
+ggplot(data=subway, aes(x=index, y=var_n6))+
+  geom_boxplot(fill='slategrey',color='darkslategrey',width=0.3)
+
+ggplot(data=subway, aes(x=index, y=var_n7))+
+  geom_boxplot(fill='slategrey',color='darkslategrey',width=0.3)
+
+ggplot(data=subway, aes(x=index, y=var_n8))+
+  geom_boxplot(fill='slategrey',color='darkslategrey',width=0.3)
+
+ggplot(data=subway, aes(x=index, y=var_n9))+
+  geom_boxplot(fill='slategrey',color='darkslategrey',width=0.3)
+
+ggplot(data=subway, aes(x=index, y=var_n10))+
+  geom_boxplot(fill='slategrey',color='darkslategrey',width=0.3)
+
+ggplot(data=subway, aes(x=index, y=var_n11))+
+  geom_boxplot(fill='slategrey',color='darkslategrey',width=0.3)
+
+ggplot(data=subway, aes(x=index, y=var_n12))+
+  geom_boxplot(fill='slategrey',color='darkslategrey',width=0.3)
+
+ggplot(data=subway, aes(x=index, y=var_n13))+
+  geom_boxplot(fill='slategrey',color='darkslategrey',width=0.3)
+
+ggplot(data=subway, aes(x=index, y=var_n14))+
+  geom_boxplot(fill='slategrey',color='darkslategrey',width=0.3)
+
+ggplot(data=subway, aes(x=index, y=var_n15))+
+  geom_boxplot(fill='slategrey',color='darkslategrey',width=0.3)
+
+ggplot(data=subway, aes(x=index, y=var_n16))+
+  geom_boxplot(fill='slategrey',color='darkslategrey',width=0.3)
+
+ggplot(data=subway, aes(x=index, y=var_n17))+
+  geom_boxplot(fill='slategrey',color='darkslategrey',width=0.3)
+
+ggplot(data=subway, aes(x=index, y=user))+
+  geom_boxplot(fill='slategrey',color='darkslategrey',width=0.3)
+
+
+# 변수 변환
+# x, y
+ggplot(data=subway, aes(x=var_n1, y = user)) + geom_point(shape=15, size=1, colour="darkblue")
+ggtitle("Scatter Plot")
+# x, 루트y
+ggplot(data=subway, aes(x=var_n1, y = sqrt(user))) + geom_point(shape=15, size=1, colour="darkblue")
+ggtitle("Scatter Plot")
+# x, 로그y
+ggplot(data=subway, aes(x=var_n1, y = log(user))) + geom_point(shape=15, size=1, colour="darkblue")
+ggtitle("Scatter Plot")
+
+
+# 루트x, y
+ggplot(data=subway, aes(x=sqrt(var_n1), y = user)) + geom_point(shape=15, size=1, colour="darkblue")
+ggtitle("Scatter Plot")
+# 루트x, 루트y
+ggplot(data=subway, aes(x=sqrt(var_n1), y = sqrt(user))) + geom_point(shape=15, size=1, colour="darkblue")
+ggtitle("Scatter Plot")
+# 루트x, 로그y [선형성]
+ggplot(data=subway, aes(x=sqrt(var_n1), y = log(user))) + geom_point(shape=15, size=1, colour="darkblue")
+ggtitle("Scatter Plot")
+
+
+# 로그x, y
+ggplot(data=subway, aes(x=log(var_n1), y = user)) + geom_point(shape=15, size=1, colour="darkblue")
+ggtitle("Scatter Plot")
+# 로그x, 루트y
+ggplot(data=subway, aes(x=log(var_n1), y = sqrt(user))) + geom_point(shape=15, size=1, colour="darkblue")
+ggtitle("Scatter Plot")
+# 로그x, 로그y
+ggplot(data=subway, aes(x=log(var_n1), y = log(user))) + geom_point(shape=15, size=1, colour="darkblue")
+ggtitle("Scatter Plot")
+
+
+
+
+ggplot(data=subway, aes(x=var_n3, y = user)) + geom_point(shape=15, size=1, colour="darkblue")
+ggtitle("Scatter Plot")
+
+
+#===========================================
+# Corrplot 시각화
+#===========================================
+
+install.packages("corrplot")
+library(corrplot)
+
+str(subway)
+
+M <- cor(subway[,5:22])
+M
+corrplot(M,method="ellipse")

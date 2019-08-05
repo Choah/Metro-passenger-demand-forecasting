@@ -1,0 +1,128 @@
+
+
+#========================================================
+# 지하철 역 별 주요 상가 업소 밀도 변수 생성
+#========================================================
+
+# 라디안 변환 코드
+install.packages("NISTunits", dependencies = TRUE)
+library(NISTunits)
+library(ggplot2)
+library(dplyr)
+
+# 워킹 디렉토리 설정
+setwd("D:/Project/캡스톤디자인 프로젝트/Working Directory/subway")
+getwd()
+
+# 데이터 시트 불러오기
+subway_all_set <- read.csv("subway_all_set.csv", header = T, stringsAsFactors = F)
+
+
+# 상가 카운팅 프로그램
+
+for (j in 1:9){
+  
+  var <- paste("var_0", j, sep="")
+  csv <- paste(var,".csv",sep="")
+  url <- paste("",csv,sep="")
+  
+  variance <- read.csv(url, header = T, stringsAsFactors = F)
+  variance <- variance %>% group_by(lon, lat) %>% summarise(a = sum(lon))
+  variance <- data.frame(lon=variance$lon, lat=variance$lat)
+  
+  # 지구 반지름 r (단위:km) 위키백과 기준
+  r=6378.137
+  # 지하철 역 좌표
+  lon1<-NISTdegTOradian(subway_all_set$lon)
+  lat1<-NISTdegTOradian(subway_all_set$lat)
+  # 상가 좌표
+  lon2<-NISTdegTOradian(variance$lon)
+  lat2<-NISTdegTOradian(variance$lat)
+  
+  # 각각의 지하철 역에 대해 모든 상가와의 거리 저장
+  #paste(var,"_n",sep = "") <- NA
+  var_n <- NA
+  for (i in (1:length(subway_all_set[,1]))) {
+    print(i)
+    
+    dlon<-lon2-lon1[i]
+    dlat<-lat2-lat1[i]
+    
+    a<-sin(dlat/2)^2+cos(lat1[i])*cos(lat2)*sin(dlon/2)^2
+    c<-2*atan2(sqrt(a),sqrt(1-a))
+    distance <- r*c 
+    
+    index <- distance <= 0.7
+    
+    var_n[i] <- 
+      length(variance[index, 1])
+  }
+  
+  # 데이터 셋에 변수 추가
+  subway_all_set <- cbind(subway_all_set, var_n)
+  colnames(subway_all_set)[4+j] <- paste("var_n",j,sep="")
+}
+
+
+####
+
+for (j in 0:1){
+  
+  var <- paste("var_1", j, sep="")
+  csv <- paste(var,".csv",sep="")
+  url <- paste("",csv,sep="")
+  
+  variance <- read.csv(url, header = T, stringsAsFactors = F)
+  variance <- variance %>% group_by(lon, lat) %>% summarise(a = sum(lon))
+  variance <- data.frame(lon=variance$lon, lat=variance$lat)
+  
+  # 지구 반지름 r (단위:km) 위키백과 기준
+  r=6378.137
+  # 지하철 역 좌표
+  lon1<-NISTdegTOradian(subway_all_set$lon)
+  lat1<-NISTdegTOradian(subway_all_set$lat)
+  # 상가 좌표
+  lon2<-NISTdegTOradian(variance$lon)
+  lat2<-NISTdegTOradian(variance$lat)
+  
+  # 각각의 지하철 역에 대해 모든 상가와의 거리 저장
+  #paste(var,"_n",sep = "") <- NA
+  var_n <- NA
+  for (i in (1:length(subway_all_set[,1]))) {
+    print(i)
+    
+    dlon<-lon2-lon1[i]
+    dlat<-lat2-lat1[i]
+    
+    a<-sin(dlat/2)^2+cos(lat1[i])*cos(lat2)*sin(dlon/2)^2
+    c<-2*atan2(sqrt(a),sqrt(1-a))
+    distance <- r*c 
+    
+    index <- distance <= 0.7
+    
+    var_n[i] <- 
+      length(variance[index, 1])
+  }
+  
+  # 데이터 셋에 변수 추가
+  subway_all_set <- cbind(subway_all_set, var_n)
+  colnames(subway_all_set)[14+j] <- paste("var_n1",j,sep="")
+}
+
+# :: 변수 설명 ::
+# VAR_01 햄버거 : 맥도날드
+# VAR_02 햄버거 : 롯데리아
+# VAR_03 편의점 : 씨유
+# VAR_04 편의점 : GS25
+# VAR_05 편의점 : 세븐일레븐
+# VAR_06 카페 : 스타벅스
+# VAR_07 카페 : 이디야
+# VAR_08 화장품판매점 : 올리브영
+# VAR_09 화장품판매점 : 왓슨스
+# VAR_10 화장품판매점 : 더페이스샵
+# VAR_11 화장품판매점 : 이니스프리
+
+
+###
+
+write.csv(subway_all_set, "temp.csv",row.names=F)

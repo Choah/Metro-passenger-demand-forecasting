@@ -1,0 +1,116 @@
+#========================================================
+# 데이터 시트 구성
+#========================================================
+library(dplyr)
+
+setwd("D:/Project/캡스톤디자인 프로젝트/Working Directory/subway")
+getwd()
+
+subway_01_set <- read.csv("subway_01_set.csv", header = T, stringsAsFactors = F)
+subway_02_set <- read.csv("subway_02_set.csv", header = T, stringsAsFactors = F)
+subway_03_set <- read.csv("subway_03_set.csv", header = T, stringsAsFactors = F)
+subway_04_set <- read.csv("subway_04_set.csv", header = T, stringsAsFactors = F)
+subway_05_set <- read.csv("subway_05_set.csv", header = T, stringsAsFactors = F)
+subway_06_set <- read.csv("subway_06_set.csv", header = T, stringsAsFactors = F)
+subway_07_set <- read.csv("subway_07_set.csv", header = T, stringsAsFactors = F)
+
+
+# 서울수도권 지하철 일부 역 좌표 수정
+
+# 송정258, 양원318, 증산416
+
+#word = enc2utf8("지하철 송정역")
+#gc_1 <- geocode(word)
+
+#word = enc2utf8("망우동 양원역")
+#gc_2 <- geocode(word)
+
+#word = enc2utf8("증산동 증산역")
+#gc_3 <- geocode(word)
+
+
+#subway_01_set$lon[258] <- gc_1$lon
+#subway_01_set$lat[258] <- gc_1$lat
+
+#subway_01_set$lon[318] <- gc_2$lon
+#subway_01_set$lat[318] <- gc_2$lat
+
+#subway_01_set$lon[416] <- gc_3$lon
+#subway_01_set$lat[416] <- gc_3$lat
+
+
+#gc_temp <- subway_01_set[,c(3,4)]
+#write.csv(gc_temp, "gc_01.csv",row.names = F)
+#write.csv(subway_01_set, "subway_01_set.csv",row.names = F)
+
+
+#
+subway_all_set <- rbind(subway_01_set, subway_02_set, subway_03_set, subway_04_set, subway_05_set, subway_06_set, subway_07_set)
+
+# 중복 확인
+temp <- subway_all_set %>% group_by(lon, lat) %>% summarise(sum=length(station_nm))
+
+
+# 의정부(377, 668) / 기흥(70, 722) /증산(416, 655) 세 개 역 노선 간 중복
+
+#subway_all_set[377,]
+#subway_all_set[668,]
+
+#subway_all_set[70,]
+#subway_all_set[722,]
+
+#subway_all_set[416,]
+#subway_all_set[655,]
+
+
+
+###
+
+subway_all_set$index <- 0
+subway_all_set$index[1:476] <- 1
+subway_all_set$index[477:562] <- 2
+subway_all_set$index[563:664] <- 3
+subway_all_set$index[665:679] <- 4
+subway_all_set$index[680:699] <- 5
+subway_all_set$index[700:721] <- 6
+subway_all_set$index[722:736] <- 7
+
+#################################################
+# 의정부
+
+subway_all_set$index[668] <- 1
+
+
+# 기흥
+
+subway_all_set$index[722] <- 1
+
+
+#
+subway_all_set_1 <- 
+  subway_all_set %>% 
+  group_by(index, station_nm, lon, lat) %>% 
+  summarise(user = round(sum(user)))
+
+
+#------------------------------#
+# INDEX ::     [subway_all_set ]
+# 01_서울 수도권       001 : 476
+# 02_대구              477 : 562
+# 03_부산              563 : 664
+# 04_의정부            665 : 678
+# 05_광주              679 : 698
+# 06_대전              699 : 720
+# 07_용인              721 : 734
+#------------------------------#
+
+
+
+# 저장
+write.csv(subway_all_set_1, "subway_all_set.csv",row.names = F)
+
+
+
+
+
+

@@ -1,0 +1,227 @@
+#===================================
+# 상가 데이터 통합 데이터 시트 구성
+#===================================
+
+setwd("D:/Project/캡스톤디자인 프로젝트/Working Directory/subway")
+getwd()
+
+store01 <- read.csv("store01.csv", header = T, stringsAsFactors = F)
+store02 <- read.csv("store02.csv", header = T, stringsAsFactors = F)
+store03 <- read.csv("store03.csv", header = T, stringsAsFactors = F)
+store04 <- read.csv("store04.csv", header = T, stringsAsFactors = F)
+
+
+
+store01 <- store01[,c(2,3,5,7,9,32,38,39)]
+store02 <- store02[,c(2,3,5,7,9,32,38,39)]
+store03 <- store03[,c(2,3,5,7,9,32,38,39)]
+store04 <- store04[,c(2,3,5,7,9,32,38,39)]
+
+store <- rbind(store01, store02, store03, store04)
+
+# store 변수명 재지정하기
+
+colnames(store) <- c("brand_nm","branch_nm","main_cg","middle_cg","small_cg","address","lon","lat")
+
+# store.csv 생성 :: 전국 상가 데이터
+write.csv(store, "store.csv", row.names = F)
+
+
+
+
+#--------------------------------------------------------------
+
+
+
+
+#============================================
+# STORE 전국 상가 데이터 불러오기
+#============================================
+library(dplyr)
+store <- read.csv("store.csv", header = T, stringsAsFactors = F)
+
+
+#============================================
+# 개별 상가 데이터 생성
+#============================================
+
+# ▶ 소분류 필터링 :: 패스트푸드
+
+fastfood <- store %>% filter(small_cg=="패스트푸드")
+
+
+#============================================
+# :: var_01 :: [햄버거1 - 맥도날드]
+#============================================
+
+index_01 <- grep("맥도날드", fastfood$brand_nm)
+var_01 <- fastfood[index_01,]
+
+write.csv(var_01, "var_01.csv", row.names = F)
+
+#============================================
+# :: var_02 :: [햄버거2 - 롯데리아]
+#============================================
+
+index_02 <- grep("롯데리아", fastfood$brand_nm)
+var_02 <- fastfood[index_02,]
+
+write.csv(var_02, "var_02.csv", row.names = F)
+
+# ▶ 소분류 필터링 :: 편의점
+
+convenience <- store %>% filter(small_cg=="편의점")
+
+convenience$brand_nm <- gsub("씨유","CU",convenience$brand_nm)
+convenience$brand_nm <- gsub("cu","CU",convenience$brand_nm)
+convenience$brand_nm <- gsub("Cu","CU",convenience$brand_nm)
+
+convenience$brand_nm <- gsub("지에스","GS",convenience$brand_nm)
+
+convenience$brand_nm <- gsub("7-11","세븐일레븐",convenience$brand_nm)
+convenience$brand_nm <- gsub("7ekeven","세븐일레븐",convenience$brand_nm)
+convenience$brand_nm <- gsub("7ELEVEl","세븐일레븐",convenience$brand_nm)
+convenience$brand_nm <- gsub("7ELEVEN","세븐일레븐",convenience$brand_nm)
+convenience$brand_nm <- gsub("7세븐","세븐일레븐",convenience$brand_nm)
+convenience$brand_nm <- gsub("7이레븐","세븐일레븐",convenience$brand_nm)
+convenience$brand_nm <- gsub("7일레븐","세븐일레븐",convenience$brand_nm)
+convenience$brand_nm <- gsub("7-일레븐","세븐일레븐",convenience$brand_nm)
+convenience$brand_nm <- gsub("7편의점","세븐일레븐",convenience$brand_nm)
+
+
+#============================================
+# :: var_03 :: [편의점1 - CU(씨유)]
+#============================================
+#--------------------------------------------
+# 지점명 중복 삭제 코드 [꼭 필요한 건 아님]
+#temp<- convenience
+#for(i in 1:length(temp[,1])){
+#  temp$brand_nm[i] <- gsub(temp[i,2],"",temp$brand_nm[i])
+#}
+#index_temp <- grep("CU", temp$brand_nm)
+#var_temp <- temp[index_temp,]
+#--------------------------------------------
+
+index_03 <- grep("CU", convenience$brand_nm)
+var_03 <- convenience[index_03,]
+
+write.csv(var_03, "var_03.csv", row.names = F)
+
+#============================================
+# :: var_04 :: [편의점2 - GS25(지에스25)]
+#============================================
+
+index_04 <- grep("GS", convenience$brand_nm)
+var_04 <- convenience[index_04,]
+
+write.csv(var_04, "var_04.csv", row.names = F)
+
+#============================================
+# :: var_05 :: [편의점3 - 세븐일레븐]
+#============================================
+
+index_05 <- grep("세븐일레븐", convenience$brand_nm)
+var_05 <- convenience[index_05,]
+
+write.csv(var_05, "var_05.csv", row.names = F)
+
+
+# ▶ 소분류 필터링 :: 카페
+
+cafe <- store %>% filter(small_cg=="커피전문점/카페/다방")
+
+cafe$brand_nm <- gsub("STARBUCKS", "스타벅스", cafe$brand_nm)
+cafe$brand_nm <- gsub("ediya", "이디야", cafe$brand_nm)
+cafe$brand_nm <- gsub("EDIYA", "이디야", cafe$brand_nm)
+
+#============================================
+# :: var_06 :: [카페1 - 스타벅스,starbucks]
+#============================================
+
+index_06 <- grep("스타벅스", store$brand_nm)
+var_06 <- store[index_06,]
+
+write.csv(var_06, "var_06.csv", row.names = F)
+
+#============================================
+# :: var_07 :: [카페2 - 이디야]
+#============================================
+
+index_07 <- grep("이디야", store$brand_nm)
+var_07 <- store[index_07,]
+
+write.csv(var_07, "var_07.csv", row.names = F)
+
+
+# ▶ 소분류 필터링 :: 화장품판매점
+
+beauty <- store %>% filter(small_cg=="화장품판매점")
+
+
+#============================================
+# :: var_08 :: [뷰티1 - 올리브영]
+#============================================
+
+index_08 <- grep("올리브영", store$brand_nm)
+var_08 <- store[index_08,]
+
+write.csv(var_08, "var_08.csv", row.names = F)
+
+
+#============================================
+# :: var_09 :: [뷰티2 - 왓슨스]
+#============================================
+
+index_09 <- grep("왓슨스", store$brand_nm)
+var_09 <- store[index_09,]
+
+write.csv(var_09, "var_09.csv", row.names = F)
+
+
+#============================================
+# :: var_10 :: [뷰티3 - 더페이스샵]
+#============================================
+
+index_10 <- grep("더페이스샵", store$brand_nm)
+var_10 <- store[index_10,]
+
+write.csv(var_10, "var_10.csv", row.names = F)
+
+
+#============================================
+# :: var_11 :: [뷰티4 - 이니스프리]
+#============================================
+
+index_11 <- grep("이니스프리", store$brand_nm)
+var_11 <- store[index_11,]
+
+write.csv(var_11, "var_11.csv", row.names = F)
+
+
+
+
+
+
+
+#============================================
+# :: var_03 :: [영화관1 - CGV] - [[영화관 데이터 없음]]
+#============================================
+
+#index_03_01 <- grep("CGV", store$brand_nm)
+#index_03_02 <- grep("씨지브이", store$brand_nm)
+
+#var_03_01 <- store[index_03_01,]
+#var_03_02 <- store[index_03_02,]
+#var_03 <- rbind(var_03_01, var_03_02)
+
+#write.csv(var_03, "var_03.csv", row.names = F)
+
+#============================================
+# :: var_04 :: [영화관2 - 롯데시네마] - [[영화관 데이터 없음]]
+#============================================
+
+#index_04 <- grep("롯데시네마", store$brand_nm)
+#var_04 <- store[index_04,]
+
+#write.csv(var_04, "var_04.csv", row.names = F)
+

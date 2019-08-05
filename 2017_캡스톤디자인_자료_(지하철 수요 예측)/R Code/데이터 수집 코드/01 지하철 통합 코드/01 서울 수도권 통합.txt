@@ -1,0 +1,437 @@
+#======================================================
+# 하루 평균 지하철 역 이용자 수 예측 모델링
+#======================================================
+#======================================================
+# 데이터 수집
+#======================================================
+
+# 워킹 디렉토리 설정
+
+setwd("D:/Project/캡스톤디자인 프로젝트/Working Directory/subway")
+getwd()
+
+
+# 패키지 라이브러리
+
+library(dplyr)
+
+
+# 2016년도 월별 서울 수도권 지하철 승하차 인원 데이터 불러오기
+
+m01<-read.csv("seoul/01.csv", header = T, stringsAsFactors = F)
+m02<-read.csv("seoul/02.csv", header = T, stringsAsFactors = F)
+m03<-read.csv("seoul/03.csv", header = T, stringsAsFactors = F)
+m04<-read.csv("seoul/04.csv", header = T, stringsAsFactors = F)
+m05<-read.csv("seoul/05.csv", header = T, stringsAsFactors = F)
+m06<-read.csv("seoul/06.csv", header = T, stringsAsFactors = F)
+m07<-read.csv("seoul/07.csv", header = T, stringsAsFactors = F)
+m08<-read.csv("seoul/08.csv", header = T, stringsAsFactors = F)
+m09<-read.csv("seoul/09.csv", header = T, stringsAsFactors = F)
+m10<-read.csv("seoul/10.csv", header = T, stringsAsFactors = F)
+m11<-read.csv("seoul/11.csv", header = T, stringsAsFactors = F)
+m12<-read.csv("seoul/12.csv", header = T, stringsAsFactors = F)
+
+
+
+# rawdata :: 1월 ~ 12월 데이터 통합 (2016년도 데이터)
+
+rawdata <- rbind(m01,m02,m03,m04,
+                 m05,m06,m07,m08,
+                 m09,m10,m11,m12)
+
+
+# rawdata :: col3(역ID), col7(등록일자) 변수 삭제
+
+rawdata <- rawdata[,c(-3,-7)]
+
+
+# 총승객수 (승차총승객수 + 하차총승객수) 변수 생성
+
+총승객수 <- rawdata$승차총승객수 + rawdata$하차총승객수
+rawdata <- cbind(rawdata, 총승객수)
+
+
+# 승차, 하차 변수 삭제
+
+rawdata <- rawdata[,c(-4,-5)]
+
+
+# rawdata 변수명 영문으로 변경
+
+colnames(rawdata) <- c("date","line_nm","station_nm","total")
+
+
+# 데이터 유일성 확인 :: 역 별 관측치 갯수 확인
+
+A <- rawdata %>% group_by(station_nm, line_nm) %>% summarise(n = length(station_nm))
+
+
+# 데이터 유일성 확인 :: 관측치 291개, 75개 역명 확인
+
+B <- subset(A, select = c("station_nm"), subset = (n==291))
+C <- subset(A, select = c("station_nm"), subset = (n==75))
+
+station_name <- cbind(B,C)
+station_name
+
+
+# 역명 변환
+
+rawdata$station_nm <- gsub("[[:punct:]]+.+[[:punct:]]", "", rawdata$station_nm)
+rawdata$station_nm <- gsub("동두천 중앙", "동두천중앙", rawdata$station_nm)
+rawdata$station_nm <- gsub("쌍용동", "쌍용", rawdata$station_nm)
+rawdata$station_nm <- gsub("신천", "잠실새내", rawdata$station_nm)
+rawdata$station_nm <- gsub("서울역", "서울", rawdata$station_nm)
+rawdata$station_nm <- gsub("이수", "총신대입구", rawdata$station_nm)
+rawdata$line_nm <- gsub("9호선2단계", "9호선", rawdata$line_nm)
+
+
+# 역 별 관측치 갯수 확인
+
+A <- rawdata %>% group_by(station_nm, line_nm) %>% summarise(n = length(station_nm))
+table(A$line_nm)
+
+
+#======================================================
+# 서울 수도권 지하철 역 별 이용자 수 데이터 구성
+#======================================================
+# 1~9호선 역 별 하루 평균 이용자 수 데이터 생성
+# 1호선
+line01 <-
+  rawdata %>% 
+  filter(line_nm == c("1호선")) %>%
+  group_by(station_nm, line_nm) %>% 
+  summarise(mean=round(mean(total)))
+
+# 2호선
+line02 <-
+  rawdata %>% 
+  filter(line_nm == c("2호선")) %>%
+  group_by(station_nm, line_nm) %>% 
+  summarise(mean=round(mean(total)))
+
+# 3호선 [이상치 충무로 제거]
+line03 <-
+  rawdata %>% 
+  filter(line_nm == c("3호선")) %>% 
+  filter(station_nm != "충무로") %>%
+  group_by(station_nm, line_nm) %>% 
+  summarise(mean=round(mean(total)))
+
+# 4호선
+line04 <-
+  rawdata %>% 
+  filter(line_nm == c("4호선")) %>%
+  group_by(station_nm, line_nm) %>% 
+  summarise(mean=round(mean(total)))
+
+# 5호선
+line05 <-
+  rawdata %>% 
+  filter(line_nm == c("5호선")) %>%
+  group_by(station_nm, line_nm) %>% 
+  summarise(mean=round(mean(total)))
+
+# 6호선 [이상치 연신내 제거]
+line06 <-
+  rawdata %>% 
+  filter(line_nm == c("6호선")) %>% 
+  filter(station_nm != "연신내") %>%
+  group_by(station_nm, line_nm) %>% 
+  summarise(mean=round(mean(total)))
+
+# 7호선
+line07 <-
+  rawdata %>% 
+  filter(line_nm == c("7호선")) %>%
+  group_by(station_nm, line_nm) %>% 
+  summarise(mean=round(mean(total)))
+
+# 8호선
+line08 <-
+  rawdata %>% 
+  filter(line_nm == c("8호선")) %>%
+  group_by(station_nm, line_nm) %>% 
+  summarise(mean=round(mean(total)))
+
+# 9호선
+line09 <-
+  rawdata %>% 
+  filter(line_nm == c("9호선")) %>%
+  group_by(station_nm, line_nm) %>% 
+  summarise(mean=round(mean(total)))
+
+
+# 1~9호선병합
+line_all <- rbind(line01,line02,line03,line04,line05,line06,line07,line08,line09)
+
+
+#======================================================
+# 수도권 노선 데이터 통합
+#======================================================
+
+# 결측치 확인
+outlier<-A %>% filter(n != 366) %>% select(station_nm, line_nm, n)
+
+## 수도권 13개 노선 ::: []는 결측치 포함된 관측치
+# 경부선 [서울]
+cap01 <-
+  rawdata %>% 
+  filter(line_nm == c("경부선")) %>%
+  filter(station_nm != "서울") %>%
+  group_by(station_nm, line_nm) %>% 
+  summarise(mean=round(mean(total)))
+
+# 경원선 [창동]
+cap02 <-
+  rawdata %>% 
+  filter(line_nm == c("경원선")) %>%
+  filter(station_nm != "창동") %>%
+  group_by(station_nm, line_nm) %>% 
+  summarise(mean=round(mean(total)))
+
+# 경의선 [검암,서울역,효창공원앞]
+cap03 <-
+  rawdata %>% 
+  filter(line_nm == c("경의선")) %>%
+  filter(station_nm != "검암") %>%
+  filter(station_nm != "서울역") %>%
+  filter(station_nm != "효창공원앞") %>%
+  group_by(station_nm, line_nm) %>% 
+  summarise(mean=round(mean(total)))
+
+# 경인선
+cap04 <-
+  rawdata %>% 
+  filter(line_nm == c("경인선")) %>%
+  group_by(station_nm, line_nm) %>% 
+  summarise(mean=round(mean(total)))
+
+# 경춘선
+cap05 <-
+  rawdata %>% 
+  filter(line_nm == c("경춘선")) %>%
+  group_by(station_nm, line_nm) %>% 
+  summarise(mean=round(mean(total)))
+
+# 공항철도 1호선 [영종]
+cap06 <-
+  rawdata %>% 
+  filter(line_nm == c("공항철도 1호선")) %>%
+  filter(station_nm != "영종") %>%
+  group_by(station_nm, line_nm) %>% 
+  summarise(mean=round(mean(total)))
+
+# 과천선
+cap07 <-
+  rawdata %>% 
+  filter(line_nm == c("과천선")) %>%
+  group_by(station_nm, line_nm) %>% 
+  summarise(mean=round(mean(total)))
+
+# 분당선 [복정]
+cap08 <-
+  rawdata %>% 
+  filter(line_nm == c("분당선")) %>%
+  filter(station_nm != "복정") %>%
+  group_by(station_nm, line_nm) %>% 
+  summarise(mean=round(mean(total)))
+
+# 수인선 [숭의,신포,인천,인하대]
+cap09 <-
+  rawdata %>% 
+  filter(line_nm == c("수인선")) %>%
+  filter(station_nm != "숭의") %>%
+  filter(station_nm != "신포") %>%
+  filter(station_nm != "인천") %>%
+  filter(station_nm != "인하대") %>%
+  group_by(station_nm, line_nm) %>% 
+  summarise(mean=round(mean(total)))
+
+# 안산선
+cap10 <-
+  rawdata %>% 
+  filter(line_nm == c("안산선")) %>%
+  group_by(station_nm, line_nm) %>% 
+  summarise(mean=round(mean(total)))
+
+# 일산선 [지축]
+cap11 <-
+  rawdata %>% 
+  filter(line_nm == c("일산선")) %>%
+  filter(station_nm != "지축") %>%
+  group_by(station_nm, line_nm) %>% 
+  summarise(mean=round(mean(total)))
+
+# 장항선
+cap12 <-
+  rawdata %>% 
+  filter(line_nm == c("장항선")) %>%
+  group_by(station_nm, line_nm) %>% 
+  summarise(mean=round(mean(total)))
+
+# 중앙선
+cap13 <-
+  rawdata %>% 
+  filter(line_nm == c("중앙선")) %>%
+  group_by(station_nm, line_nm) %>% 
+  summarise(mean=round(mean(total)))
+
+# 수도권 병합
+
+cap_all <- rbind(cap01,cap02,cap03,cap04,cap05,cap06,cap07,cap08,cap09,cap10,cap11,cap12,cap13)
+
+
+# 서울 + 수도권 병합
+
+subway_01 <- rbind(line_all, cap_all)
+
+
+# 서울 수도권 지하철 중복 노선 통합
+
+subway_01_dt <- 
+  subway_01 %>% 
+  group_by(station_nm) %>%
+  summarise(user = round(sum(mean)))
+
+
+#======================================================
+# 데이터 셋 저장
+#======================================================
+
+# 전처리 완료 데이터 셋 저장
+
+# [subway_01_dt.csv] :: 서울 수도권 지하철 (역) 별 하루 평균 이용자 수
+write.csv(subway_01_dt, file = "subway_01_dt.csv", row.names = F)
+
+
+
+
+
+#======================================================
+# 지하철 수요 예측 모델링
+#======================================================
+#======================================================
+# (변수) 지하철 역 좌표 (경도[lon], 위도[lat])
+#======================================================
+
+# 워킹 디렉토리 설정
+setwd("D:/Project/캡스톤디자인 프로젝트/Working Directory/subway")
+
+# 패키지 라이브러리
+library(ggmap)
+library(dplyr)
+
+# Data 불러오기
+subway_01_dt <- read.csv("subway_01_dt.csv", header = T, stringsAsFactors = F)
+
+# 검색어 word 생성 :: 지하철 이름 UTF-8 인코딩
+word <- enc2utf8(paste(subway_01_dt$station_nm, "역", sep=""))
+
+# geocode를 이용해 경도, 위도 생성
+
+gc <- geocode(word)
+
+# 좌표 결측치 확인
+sum(is.na(gc[,1]))
+
+# 갱신
+word_temp <- word[is.na(gc[,1])]
+gc2 <- geocode(word_temp)
+
+gc[is.na(gc[,1]),] <- gc2
+
+
+
+#gc <- read.csv("C:/R/subway/gc_01.csv", header = T, stringsAsFactors = F)
+#word[318]<- enc2utf8("서울 양원역")
+#gc2<-geocode(word[318])
+#gc[318,]<-gc2[1,]
+
+#gc <- geocode(word)
+#gc2 <- geocode(word)
+#for (j in (1:length(gc$lon))) {
+#  if (is.na(gc2[j,][1]) == T) {
+#    gc[j,] <- gc[j,]  
+#  }
+#  else {
+#    gc[j,] <- gc2[j,]
+#  }
+#}
+#gc2 <- geocode(word[49])
+#gc[49,] <- gc2
+
+# 좌표 합치기
+
+subway_01_set <- cbind(subway_01_dt, gc)
+
+
+# 좌표 수정
+
+subway_01_dt<- read.csv("subway_01_dt.csv", header = T, stringsAsFactors = F)
+subway_01_set <- read.csv("subway_01_set.csv", header = T, stringsAsFactors = F)
+
+new <- data.frame(station_nm = subway_01_dt$station_nm,
+                  user = subway_01_dt$user,
+                  lon = subway_01_set$lon[c(1:379, 381:477)],
+                  lat = subway_01_set$lat[c(1:379, 381:477)])
+
+
+subway_01_set <- new
+
+temp <- subway_01_set %>% group_by(lon, lat) %>% summarise(sum=length(station_nm))
+
+
+word <- enc2utf8("지하철 7호선 상동역")
+gc <- geocode(word)
+
+
+# 상도역
+gc$lon <- 126.947750
+gc$lat <- 37.503068
+
+subway_01_set$lon[219] <- gc$lon
+subway_01_set$lat[219] <- gc$lat
+subway_01_set[219,]
+
+
+# 화전역 , 
+gc$lon <- 126.868334
+gc$lat <- 37.602896
+
+subway_01_set$lon[470] <- gc$lon
+subway_01_set$lat[470] <- gc$lat
+subway_01_set[470,]
+
+
+# 화정역  , 
+gc$lon <- 126.832631
+gc$lat <- 37.634577
+
+subway_01_set$lon[471] <- gc$lon
+subway_01_set$lat[471] <- gc$lat
+subway_01_set[471,]
+
+
+# 신답역  ,  
+gc$lon <- 127.047030
+gc$lat <- 37.569890
+
+subway_01_set$lon[279] <- gc$lon
+subway_01_set$lat[279] <- gc$lat
+subway_01_set[279,]
+
+
+# 신사역 37.516405, 127.020326  
+gc$lon <- 127.020326
+gc$lat <- 37.516405
+
+subway_01_set$lon[288] <- gc$lon
+subway_01_set$lat[288] <- gc$lat
+subway_01_set[288,]
+
+
+
+# 저장
+# write.csv(gc, "C:/R/subway/gc_01.csv", row.names = F)
+# write.csv(subway_01_set, "C:/R/subway/subway_01_set.csv", row.names = F)

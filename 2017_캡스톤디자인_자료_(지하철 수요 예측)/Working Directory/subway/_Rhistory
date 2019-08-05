@@ -1,0 +1,512 @@
+library(dplyr)
+# Data 불러오기
+subway_07_dt <- read.csv("C:/R/subway/subway_04_dt.csv", header = T, stringsAsFactors = F)
+# Data 불러오기
+subway_04_dt <- read.csv("C:/R/subway/subway_04_dt.csv", header = T, stringsAsFactors = F)
+# 검색어 word 생성 :: 지하철 이름 UTF-8 인코딩
+word <- paste(subway_04_dt$station_nm, "역", sep="")
+word <- paste("의정부시 ", word, sep="")
+word <- enc2utf8(word)
+gc <- geocode(word)
+# 좌표 결측치 확인
+sum(is.na(gc[,1]))
+# 갱신
+word_temp <- word[is.na(gc[,1])]
+gc2 <- geocode(word_temp)
+word_temp
+gc[is.na(gc[,1]),] <- gc2
+# 좌표 결측치 확인
+sum(is.na(gc[,1]))
+# 좌표 합치기
+subway_04_set <- cbind(subway_04_dt, gc)
+# 중복 확인
+temp <- subway_04_set %>% group_by(lon, lat) %>% summarise(sum=length(station_nm))
+# 저장
+write.csv(gc, "C:/R/subway/gc_04.csv", row.names = F)
+write.csv(subway_04_set, "C:/R/subway/subway_04_set.csv", row.names = F)
+View(ejb)
+#========================================================
+# 데이터 시트 구성
+#========================================================
+library(dplyr)
+setwd("D:/R/subway")
+setwd("C:/R/subway")
+getwd()
+subway_01_set <- read.csv("C:/R/subway/subway_01_set.csv", header = T, stringsAsFactors = F)
+subway_02_set <- read.csv("C:/R/subway/subway_02_set.csv", header = T, stringsAsFactors = F)
+subway_03_set <- read.csv("C:/R/subway/subway_03_set.csv", header = T, stringsAsFactors = F)
+subway_04_set <- read.csv("C:/R/subway/subway_04_set.csv", header = T, stringsAsFactors = F)
+subway_05_set <- read.csv("C:/R/subway/subway_05_set.csv", header = T, stringsAsFactors = F)
+subway_06_set <- read.csv("C:/R/subway/subway_06_set.csv", header = T, stringsAsFactors = F)
+subway_07_set <- read.csv("C:/R/subway/subway_07_set.csv", header = T, stringsAsFactors = F)
+subway_all_set <- rbind(subway_01_set, subway_02_set, subway_03_set, subway_04_set, subway_05_set, subway_06_set, subway_07_set)
+476-1
+562-476
+664-562
+678-664
+678-664
+698-678
+View(subway_all_set)
+View(subway_04_set)
+View(subway_04_set)
+View(subway_04_set)
+View(subway_07_set)
+# 중복 확인
+temp <- subway_all_set %>% group_by(lon, lat) %>% summarise(sum=length(station_nm))
+View(temp)
+View(temp)
+View(subway_all_set)
+View(subway_all_set)
+View(subway_all_set)
+View(subway_04_set)
+# 워킹 디렉토리 설정
+setwd("C:/R/subway")
+getwd()
+# 패키지 라이브러리
+library(dplyr)
+# 2016년도 월별 지하철 승하차 인원 데이터 불러오기
+ejb<-read.csv("ejb.csv", header = T, stringsAsFactors = F)
+ejb$user<-round(ejb$user)
+ejb <- ejb[,c(-2)]
+#
+write.csv(ejb, "C:/R/subway/subway_04_dt.csv",row.names = F)
+# 워킹 디렉토리 설정
+setwd("C:/R/subway")
+# 패키지 라이브러리
+library(ggmap)
+library(dplyr)
+# Data 불러오기
+subway_04_dt <- read.csv("C:/R/subway/subway_04_dt.csv", header = T, stringsAsFactors = F)
+# 검색어 word 생성 :: 지하철 이름 UTF-8 인코딩
+word <- paste(subway_04_dt$station_nm, "역", sep="")
+word <- paste("의정부시 ", word, sep="")
+word <- enc2utf8(word)
+# 워킹 디렉토리 설정
+setwd("C:/R/subway")
+getwd()
+# 패키지 라이브러리
+library(dplyr)
+# 2016년도 월별 지하철 승하차 인원 데이터 불러오기
+ejb<-read.csv("ejb.csv", header = T, stringsAsFactors = F)
+ejb$user<-round(ejb$user)
+ejb <- ejb[,c(-2)]
+#
+ejb$station_nm <- gsub("역", "", busan$station_nm)
+View(ejb)
+#
+ejb$station_nm <- gsub("역", "", ejb$station_nm)
+View(ejb)
+#
+write.csv(ejb, "C:/R/subway/subway_04_dt.csv",row.names = F)
+# 워킹 디렉토리 설정
+setwd("C:/R/subway")
+# 패키지 라이브러리
+library(ggmap)
+library(dplyr)
+# Data 불러오기
+subway_04_dt <- read.csv("C:/R/subway/subway_04_dt.csv", header = T, stringsAsFactors = F)
+# 검색어 word 생성 :: 지하철 이름 UTF-8 인코딩
+word <- paste(subway_04_dt$station_nm, "역", sep="")
+word <- paste("의정부시 ", word, sep="")
+word <- enc2utf8(word)
+gc <- geocode(word)
+# 좌표 결측치 확인
+sum(is.na(gc[,1]))
+# 갱신
+word_temp <- word[is.na(gc[,1])]
+gc2 <- geocode(word_temp)
+gc[is.na(gc[,1]),] <- gc2
+# 좌표 결측치 확인
+sum(is.na(gc[,1]))
+# 갱신
+word_temp <- word[is.na(gc[,1])]
+gc2 <- geocode(word_temp)
+gc2 <- geocode(word_temp)
+gc[is.na(gc[,1]),] <- gc2
+# 좌표 결측치 확인
+sum(is.na(gc[,1]))
+# 좌표 합치기
+subway_04_set <- cbind(subway_04_dt, gc)
+# 중복 확인
+temp <- subway_04_set %>% group_by(lon, lat) %>% summarise(sum=length(station_nm))
+# 저장
+write.csv(gc, "C:/R/subway/gc_04.csv", row.names = F)
+write.csv(subway_04_set, "C:/R/subway/subway_04_set.csv", row.names = F)
+#========================================================
+# 데이터 시트 구성
+#========================================================
+library(dplyr)
+setwd("C:/R/subway")
+getwd()
+subway_01_set <- read.csv("C:/R/subway/subway_01_set.csv", header = T, stringsAsFactors = F)
+subway_02_set <- read.csv("C:/R/subway/subway_02_set.csv", header = T, stringsAsFactors = F)
+subway_03_set <- read.csv("C:/R/subway/subway_03_set.csv", header = T, stringsAsFactors = F)
+subway_04_set <- read.csv("C:/R/subway/subway_04_set.csv", header = T, stringsAsFactors = F)
+subway_05_set <- read.csv("C:/R/subway/subway_05_set.csv", header = T, stringsAsFactors = F)
+subway_06_set <- read.csv("C:/R/subway/subway_06_set.csv", header = T, stringsAsFactors = F)
+subway_07_set <- read.csv("C:/R/subway/subway_07_set.csv", header = T, stringsAsFactors = F)
+subway_all_set <- rbind(subway_01_set, subway_02_set, subway_03_set, subway_04_set, subway_05_set, subway_06_set, subway_07_set)
+# 중복 확인
+temp <- subway_all_set %>% group_by(lon, lat) %>% summarise(sum=length(station_nm))
+View(temp)
+View(subway_all_set)
+View(subway_all_set)
+subway_all_set[377]
+subway_all_set[377,]
+subway_all_set[377,]
+subway_all_set[70,]
+subway_all_set[416,]
+subway_all_set[655,]
+subway_all_set[416,]
+subway_all_set[377,]
+subway_all_set[668,]
+subway_all_set[70,]
+subway_all_set[722,]
+subway_all_set[416,]
+subway_all_set[655,]
+subway_all_set$index <- 0
+subway_all_set$index[1:476] <- 1
+subway_all_set$index[477:562] <- 2
+subway_all_set$index[563:664] <- 3
+subway_all_set$index[665:679] <- 4
+subway_all_set$index[680:699] <- 5
+subway_all_set$index[700:721] <- 6
+subway_all_set$index[722:736] <- 7
+View(subway_all_set)
+View(subway_03_set)
+View(subway_01_set)
+# 라디안 변환 코드
+install.packages("NISTunits", dependencies = TRUE)
+library(NISTunits)
+library(ggplot2)
+library(dplyr)
+# 워킹 디렉토리 설정
+setwd("C:/R/subway")
+getwd()
+# 데이터 시트 불러오기
+subway_all_set <- read.csv("C:/R/subway/subway_all_set.csv", header = T, stringsAsFactors = F)
+#========================================================
+# 데이터 시트 구성
+#========================================================
+library(dplyr)
+setwd("C:/R/subway")
+getwd()
+subway_01_set <- read.csv("C:/R/subway/subway_01_set.csv", header = T, stringsAsFactors = F)
+subway_02_set <- read.csv("C:/R/subway/subway_02_set.csv", header = T, stringsAsFactors = F)
+subway_03_set <- read.csv("C:/R/subway/subway_03_set.csv", header = T, stringsAsFactors = F)
+subway_04_set <- read.csv("C:/R/subway/subway_04_set.csv", header = T, stringsAsFactors = F)
+subway_05_set <- read.csv("C:/R/subway/subway_05_set.csv", header = T, stringsAsFactors = F)
+subway_06_set <- read.csv("C:/R/subway/subway_06_set.csv", header = T, stringsAsFactors = F)
+subway_07_set <- read.csv("C:/R/subway/subway_07_set.csv", header = T, stringsAsFactors = F)
+subway_all_set <- rbind(subway_01_set, subway_02_set, subway_03_set, subway_04_set, subway_05_set, subway_06_set, subway_07_set)
+# 중복 확인
+temp <- subway_all_set %>% group_by(lon, lat) %>% summarise(sum=length(station_nm))
+View(temp)
+subway_all_set[377,]
+subway_all_set[668,]
+subway_all_set[70,]
+subway_all_set[722,]
+subway_all_set[416,]
+subway_all_set[655,]
+View(subway_01_set)
+View(subway_01_set)
+View(subway_01_set)
+word = enc2utf8("송정역")
+geocode(word)
+word = enc2utf8("서울 송정역")
+geocode(word)
+word = enc2utf8("지하철 송정역")
+geocode(word)
+gc_1 <- geocode(word)
+gc_1
+gc_1 <- geocode(word)
+gc_1
+word = enc2utf8("지하철 양원역")
+gc_2 <- geocode(word)
+gc_2
+gc_2 <- geocode(word)
+gc_2
+gc_2 <- geocode(word)
+gc_2
+word = enc2utf8("양원역")
+gc_2 <- geocode(word)
+gc_2
+word = enc2utf8("서울 양원역")
+gc_2 <- geocode(word)
+gc_2
+gc_2 <- geocode(word)
+gc_2
+word = enc2utf8("서울 양원역")
+gc_2 <- geocode(word)
+gc_2
+word = enc2utf8("망우동 양원역")
+gc_2 <- geocode(word)
+gc_2
+word = enc2utf8("증산역")
+gc_3 <- geocode(word)
+gc_3
+word = enc2utf8("증산동 증산역")
+gc_3 <- geocode(word)
+gc_3
+subway_01_set$lon[258]
+subway_01_set$lon[258]
+subway_01_set$lat[258]
+subway_01_set$lon[318]
+subway_01_set$lat[318]
+subway_01_set$lon[416]
+subway_01_set$lat[416]
+subway_01_set$lon[258] <- gc_1$lon
+subway_01_set$lat[258] <- gc_1$lat
+subway_01_set$lon[318] <- gc_2$lon
+subway_01_set$lat[318] <- gc_2$lat
+subway_01_set$lon[416] <- gc_3$lon
+subway_01_set$lat[416] <- gc_3$lat
+View(subway_01_set)
+gc_temp <- subway_01_set[,c(3,4)]
+View(gc_temp)
+write.csv(gc_temp, "C:/R/subway/gc_01.csv",row.names = F)
+write.csv(subway_01_set, "C:/R/subway/subway_01.csv",row.names = F)
+subway_01_set <- read.csv("C:/R/subway/subway_01_set.csv", header = T, stringsAsFactors = F)
+subway_02_set <- read.csv("C:/R/subway/subway_02_set.csv", header = T, stringsAsFactors = F)
+subway_03_set <- read.csv("C:/R/subway/subway_03_set.csv", header = T, stringsAsFactors = F)
+subway_04_set <- read.csv("C:/R/subway/subway_04_set.csv", header = T, stringsAsFactors = F)
+subway_05_set <- read.csv("C:/R/subway/subway_05_set.csv", header = T, stringsAsFactors = F)
+subway_06_set <- read.csv("C:/R/subway/subway_06_set.csv", header = T, stringsAsFactors = F)
+subway_07_set <- read.csv("C:/R/subway/subway_07_set.csv", header = T, stringsAsFactors = F)
+#
+subway_all_set <- rbind(subway_01_set, subway_02_set, subway_03_set, subway_04_set, subway_05_set, subway_06_set, subway_07_set)
+# 중복 확인
+temp <- subway_all_set %>% group_by(lon, lat) %>% summarise(sum=length(station_nm))
+View(temp)
+View(subway_all_set)
+subway_01_set <- read.csv("C:/R/subway/subway_01.csv", header = T, stringsAsFactors = F)
+subway_02_set <- read.csv("C:/R/subway/subway_02_set.csv", header = T, stringsAsFactors = F)
+subway_03_set <- read.csv("C:/R/subway/subway_03_set.csv", header = T, stringsAsFactors = F)
+subway_04_set <- read.csv("C:/R/subway/subway_04_set.csv", header = T, stringsAsFactors = F)
+subway_05_set <- read.csv("C:/R/subway/subway_05_set.csv", header = T, stringsAsFactors = F)
+subway_06_set <- read.csv("C:/R/subway/subway_06_set.csv", header = T, stringsAsFactors = F)
+subway_07_set <- read.csv("C:/R/subway/subway_07_set.csv", header = T, stringsAsFactors = F)
+write.csv(subway_01_set, "C:/R/subway/subway_01_set.csv",row.names = F)
+subway_01_set <- read.csv("C:/R/subway/subway_01.csv", header = T, stringsAsFactors = F)
+subway_02_set <- read.csv("C:/R/subway/subway_02_set.csv", header = T, stringsAsFactors = F)
+subway_03_set <- read.csv("C:/R/subway/subway_03_set.csv", header = T, stringsAsFactors = F)
+subway_04_set <- read.csv("C:/R/subway/subway_04_set.csv", header = T, stringsAsFactors = F)
+subway_05_set <- read.csv("C:/R/subway/subway_05_set.csv", header = T, stringsAsFactors = F)
+subway_06_set <- read.csv("C:/R/subway/subway_06_set.csv", header = T, stringsAsFactors = F)
+subway_07_set <- read.csv("C:/R/subway/subway_07_set.csv", header = T, stringsAsFactors = F)
+subway_all_set <- rbind(subway_01_set, subway_02_set, subway_03_set, subway_04_set, subway_05_set, subway_06_set, subway_07_set)
+temp <- subway_all_set %>% group_by(lon, lat) %>% summarise(sum=length(station_nm))
+View(temp)
+subway_all_set$index <- 0
+subway_all_set$index[1:476] <- 1
+subway_all_set$index[477:562] <- 2
+subway_all_set$index[563:664] <- 3
+subway_all_set$index[665:679] <- 4
+subway_all_set$index[680:699] <- 5
+subway_all_set$index[700:721] <- 6
+subway_all_set$index[722:736] <- 7
+subway_all_set$index[668] <- 1
+subway_all_set$index[722] <- 1
+#
+subway_all_set_1 <-
+subway_all_set %>%
+group_by(index, station_nm, lon, lat) %>%
+summarise(user = round(sum(user)))
+View(subway_all_set_1)
+View(subway_all_set_1)
+View(subway_all_set)
+View(subway_all_set_1)
+View(subway_all_set)
+View(subway_all_set_1)
+View(subway_all_set)
+View(subway_all_set_1)
+View(subway_all_set_1)
+View(subway_all_set)
+View(subway_all_set_1)
+View(subway_all_set)
+subway_01_set <- read.csv("C:/R/subway/subway_01.csv", header = T, stringsAsFactors = F)
+subway_02_set <- read.csv("C:/R/subway/subway_02_set.csv", header = T, stringsAsFactors = F)
+subway_03_set <- read.csv("C:/R/subway/subway_03_set.csv", header = T, stringsAsFactors = F)
+subway_04_set <- read.csv("C:/R/subway/subway_04_set.csv", header = T, stringsAsFactors = F)
+subway_05_set <- read.csv("C:/R/subway/subway_05_set.csv", header = T, stringsAsFactors = F)
+subway_06_set <- read.csv("C:/R/subway/subway_06_set.csv", header = T, stringsAsFactors = F)
+subway_07_set <- read.csv("C:/R/subway/subway_07_set.csv", header = T, stringsAsFactors = F)
+subway_01_set <- read.csv("C:/R/subway/subway_01_set.csv", header = T, stringsAsFactors = F)
+subway_02_set <- read.csv("C:/R/subway/subway_02_set.csv", header = T, stringsAsFactors = F)
+subway_03_set <- read.csv("C:/R/subway/subway_03_set.csv", header = T, stringsAsFactors = F)
+subway_04_set <- read.csv("C:/R/subway/subway_04_set.csv", header = T, stringsAsFactors = F)
+subway_05_set <- read.csv("C:/R/subway/subway_05_set.csv", header = T, stringsAsFactors = F)
+subway_06_set <- read.csv("C:/R/subway/subway_06_set.csv", header = T, stringsAsFactors = F)
+subway_07_set <- read.csv("C:/R/subway/subway_07_set.csv", header = T, stringsAsFactors = F)
+#
+subway_all_set <- rbind(subway_01_set, subway_02_set, subway_03_set, subway_04_set, subway_05_set, subway_06_set, subway_07_set)
+# 중복 확인
+temp <- subway_all_set %>% group_by(lon, lat) %>% summarise(sum=length(station_nm))
+subway_all_set$index <- 0
+View(subway_07_set)
+476-0
+562-476
+664-562
+679-664
+699-679
+721-699
+736-721
+subway_all_set$index[1:476] <- 1
+subway_all_set$index[477:562] <- 2
+subway_all_set$index[563:664] <- 3
+subway_all_set$index[665:679] <- 4
+subway_all_set$index[680:699] <- 5
+subway_all_set$index[700:721] <- 6
+subway_all_set$index[722:736] <- 7
+subway_all_set$index[668] <- 1
+subway_all_set$index[722] <- 1
+#
+subway_all_set_1 <-
+subway_all_set %>%
+group_by(index, station_nm, lon, lat) %>%
+summarise(user = round(sum(user)))
+# 저장
+write.csv(subway_all_set_1, "C:/R/subway/subway_all_set.csv",row.names = F)
+library(NISTunits)
+library(ggplot2)
+library(dplyr)
+# 워킹 디렉토리 설정
+setwd("C:/R/subway")
+getwd()
+# 데이터 시트 불러오기
+subway_all_set <- read.csv("C:/R/subway/subway_all_set.csv", header = T, stringsAsFactors = F)
+View(subway_all_set)
+for (j in 1:8){
+var <- paste("main_0", j, sep="")
+csv <- paste(var,".csv",sep="")
+url <- paste("C:/R/subway/",csv,sep="")
+variable <- read.csv(url, header = T, stringsAsFactors = F)
+variable <- variable %>% group_by(lon, lat) %>% summarise(a = sum(lon))
+variable <- data.frame(lon=variable$lon, lat=variable$lat)
+# 지구 반지름 r (단위:km) 위키백과 기준
+r=6378.137
+# 지하철 역 좌표
+lon1<-NISTdegTOradian(subway_all_set$lon)
+lat1<-NISTdegTOradian(subway_all_set$lat)
+# 상가 좌표
+lon2<-NISTdegTOradian(variable$lon)
+lat2<-NISTdegTOradian(variable$lat)
+# 각각의 지하철 역에 대해 모든 상가와의 거리 저장
+#paste(var,"_n",sep = "") <- NA
+var_n <- NA
+for (i in (1:length(subway_all_set[,1]))) {
+print(i)
+dlon<-lon2-lon1[i]
+dlat<-lat2-lat1[i]
+a<-sin(dlat/2)^2+cos(lat1[i])*cos(lat2)*sin(dlon/2)^2
+c<-2*atan2(sqrt(a),sqrt(1-a))
+distance <- r*c
+index <- distance <= 0.7
+var_n[i] <-
+length(variable[index, 1])
+}
+# 데이터 셋에 변수 추가
+subway_all_set <- cbind(subway_all_set, var_n)
+colnames(subway_all_set)[5+j] <- paste("var_n",j,sep="")
+}
+setwd("C:/R/subway")
+getwd()
+store01 <- read.csv("C:/R/subway/store01.csv", header = T, stringsAsFactors = F)
+store02 <- read.csv("C:/R/subway/store02.csv", header = T, stringsAsFactors = F)
+store03 <- read.csv("C:/R/subway/store03.csv", header = T, stringsAsFactors = F)
+store04 <- read.csv("C:/R/subway/store04.csv", header = T, stringsAsFactors = F)
+store01 <- read.csv("C:/R/subway/store01.csv", header = T, stringsAsFactors = F)
+store01 <- read.csv("C:/R/subway/store/store01.csv", header = T, stringsAsFactors = F)
+store02 <- read.csv("C:/R/subway/store/store02.csv", header = T, stringsAsFactors = F)
+store03 <- read.csv("C:/R/subway/store/store03.csv", header = T, stringsAsFactors = F)
+store04 <- read.csv("C:/R/subway/store/store04.csv", header = T, stringsAsFactors = F)
+head(store01)
+View(store01)
+names(store01)
+store01 <- store01[,c(2,3,5,7,9,32,38,39)]
+store02 <- store02[,c(2,3,5,7,9,32,38,39)]
+store03 <- store03[,c(2,3,5,7,9,32,38,39)]
+store04 <- store04[,c(2,3,5,7,9,32,38,39)]
+store <- rbind(store01, store02, store03, store04)
+colnames(store) <- c("brand_nm","branch_nm","main_cg","middle_cg","small_cg","address","lon","lat")
+head(store)
+# store.csv 생성 :: 전국 상가 데이터
+write.csv(store, "C:/R/subway/store.csv", row.names = F)
+#============================================
+# STORE 전국 상가 데이터 불러오기
+#============================================
+library(dplyr)
+store <- read.csv("C:/R/subway/store.csv", header = T, stringsAsFactors = F)
+colnames(store)
+unique(store$main_cg)
+unique(store$middle_cg)
+unique(store$small_cg)
+main_01 <- store %>% filter(main_cg=="음식")
+main_02 <- store %>% filter(main_cg=="생활서비스")
+main_03 <- store %>% filter(main_cg=="소매")
+main_04 <- store %>% filter(main_cg=="관광/여가/오락")
+main_05 <- store %>% filter(main_cg=="학문/교육")
+main_06 <- store %>% filter(main_cg=="의료")
+main_07 <- store %>% filter(main_cg=="부동산")
+main_08 <- store %>% filter(main_cg=="숙박")
+write.csv(main_01, "C:/R/subway/main_01.csv", row.names = F)
+write.csv(main_02, "C:/R/subway/main_02.csv", row.names = F)
+write.csv(main_03, "C:/R/subway/main_03.csv", row.names = F)
+write.csv(main_04, "C:/R/subway/main_04.csv", row.names = F)
+write.csv(main_05, "C:/R/subway/main_05.csv", row.names = F)
+write.csv(main_06, "C:/R/subway/main_06.csv", row.names = F)
+write.csv(main_07, "C:/R/subway/main_07.csv", row.names = F)
+write.csv(main_08, "C:/R/subway/main_08.csv", row.names = F)
+library(NISTunits)
+library(ggplot2)
+library(dplyr)
+# 워킹 디렉토리 설정
+setwd("C:/R/subway")
+getwd()
+# 데이터 시트 불러오기
+subway_all_set <- read.csv("C:/R/subway/subway_all_set.csv", header = T, stringsAsFactors = F)
+for (j in 1:8){
+var <- paste("main_0", j, sep="")
+csv <- paste(var,".csv",sep="")
+url <- paste("C:/R/subway/",csv,sep="")
+variable <- read.csv(url, header = T, stringsAsFactors = F)
+variable <- variable %>% group_by(lon, lat) %>% summarise(a = sum(lon))
+variable <- data.frame(lon=variable$lon, lat=variable$lat)
+# 지구 반지름 r (단위:km) 위키백과 기준
+r=6378.137
+# 지하철 역 좌표
+lon1<-NISTdegTOradian(subway_all_set$lon)
+lat1<-NISTdegTOradian(subway_all_set$lat)
+# 상가 좌표
+lon2<-NISTdegTOradian(variable$lon)
+lat2<-NISTdegTOradian(variable$lat)
+# 각각의 지하철 역에 대해 모든 상가와의 거리 저장
+#paste(var,"_n",sep = "") <- NA
+var_n <- NA
+for (i in (1:length(subway_all_set[,1]))) {
+print(i)
+dlon<-lon2-lon1[i]
+dlat<-lat2-lat1[i]
+a<-sin(dlat/2)^2+cos(lat1[i])*cos(lat2)*sin(dlon/2)^2
+c<-2*atan2(sqrt(a),sqrt(1-a))
+distance <- r*c
+index <- distance <= 0.7
+var_n[i] <-
+length(variable[index, 1])
+}
+# 데이터 셋에 변수 추가
+subway_all_set <- cbind(subway_all_set, var_n)
+colnames(subway_all_set)[5+j] <- paste("var_n",j,sep="")
+}
+View(variable)
+View(subway_all_set)
+View(subway_all_set)
+write.csv(subway_all_set, "C:/R/subway/bigdata_01.csv",row.names=F)
+View(subway_all_set)
+boxplot(subway_all_set$user)
+summary(subway_all_set$user)
+?hist
+hist(subway_all_set$user)
+hist(subway_all_set, user)
+hist(subway_all_set$user)
+summary(subway_all_set$user)

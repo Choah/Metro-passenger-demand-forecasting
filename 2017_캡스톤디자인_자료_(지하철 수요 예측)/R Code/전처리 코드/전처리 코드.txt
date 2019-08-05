@@ -1,0 +1,113 @@
+#======================================
+#
+# Data Preprocessing
+#
+#======================================
+
+library(ggplot2)
+library(ggmap)
+library(RColorBrewer)
+library(dplyr)
+
+# RColorBrewer 패키지
+display.brewer.all(n=10, exact.n=FALSE)
+
+# WD Setting
+setwd("D:/Project/캡스톤디자인 프로젝트/Working Directory/subway")
+getwd()
+
+# Dataset
+subway <- read.csv("bigdata_03.csv", header = T, stringsAsFactors = F)
+str(subway)
+
+# Type 변경
+subway$index <- as.factor(subway$index) # int -> factor
+str(subway)
+
+subway2 <- subway
+
+subway2$index <- 
+  factor(subway2$index, levels=c(1,2,3,4,5,6,7), labels=c("서울/수도권","대구","부산","의정부","광주","대전","용인"))
+
+#======================================
+# 단변수 분석
+#======================================
+
+# ggplot2 설정
+theme_update(plot.title = element_text(hjust = 0.5)) # 이후 모든 플롯 제목 가운데 정렬
+
+# 개별 변수 기술통계 (Histogram, Box-Plot)
+
+# Index :: 지역별 지하철 역의 수
+
+plot_index = ggplot(subway2, aes(x=index)) + geom_bar(aes(fill=index)) 
+
+plot_index + 
+  labs(fill="") + xlab("지역") + ylab("지하철 역의 수") + ggtitle("지역 별 지하철 역의 수")
+
+# index :: 지역별 지하철 역의 분포도 (평면)
+plot_index_2 = ggplot(subway2, aes(x=lon, y=lat, color=index)) + geom_point()
+
+plot_index_2 +
+  labs(color="지역") + xlab("경도") + ylab("위도") + ggtitle("지역 별 지하철 역의 분포도")
+
+# index :: 지역별 지하철 역의 분포도 (위성사진)
+word = enc2utf8("대한민국")
+gc <- geocode(word)
+
+map <- get_googlemap(center = c(lon=gc$lon, lat=gc$lat), zoom = 7, size = c(640, 640), scale = 2, maptype = "satellite")
+map2 <- ggmap(map, extent = "device")
+map2 + geom_point(data=subway2, aes(x=lon, y=lat, color=index), size=1.5) + labs(color="") +
+  ggtitle("지역 별 지하철 역의 분포도")
+
+
+
+
+# (시각화 자료) 
+
+word2 = enc2utf8("강남역")
+gc2 = geocode(word2)
+
+a <- get_googlemap(center = c(lon=gc2$lon, lat=gc2$lat), zoom = 17, size = c(640, 640), scale = 2, maptype = "roadmap")
+a2 <- ggmap(a, extent = "device")
+a2 + geom_point(data=gc2, aes(x=lon, y=lat), size=7, color="red")
+
+
+# (시각화 자료) 
+
+word2 = enc2utf8("경기 화성시 삼성1로4길 7-4")
+gc2 = geocode(word2)
+
+a <- get_googlemap(center = c(lon=gc2$lon, lat=gc2$lat), zoom = 17, size = c(640, 640), scale = 2, maptype = "roadmap")
+a2 <- ggmap(a, extent = "device")
+a2 + geom_point(data=gc2, aes(x=lon, y=lat), size=7, color="red")
+
+#======================================
+# 이변수 분석
+#======================================
+
+# 변수 변환
+# x, y
+ggplot(data=subway, aes(x=var_n1, y = user)) + 
+  geom_point(shape=15, size=1, colour="darkblue") + 
+  geom_smooth(method = "lm")
+
+# 루트x, 로그y [선형성]
+ggplot(data=subway, aes(x=sqrt(var_n1), y = log(user))) + 
+  geom_point(shape=15, size=1, colour="darkblue") +
+  geom_smooth(method = "lm")
+
+
+cor.test(subway$var_n1, subway$user)
+cor.test(sqrt(subway$var_n1), log(subway$user))
+
+
+
+
+
+
+
+
+
+
+

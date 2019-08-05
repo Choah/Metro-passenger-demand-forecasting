@@ -1,0 +1,81 @@
+#======================================================
+# 지하철 수요 예측 모델링
+#======================================================
+#======================================================
+# [부산] 데이터 수집
+#======================================================
+
+# 워킹 디렉토리 설정
+setwd("D:/Project/캡스톤디자인 프로젝트/Working Directory/subway")
+getwd()
+
+# 패키지 라이브러리
+library(dplyr)
+
+# 2016년도 월별 지하철 승하차 인원 데이터 불러오기 
+busan <- read.csv("busan.csv", header = T, stringsAsFactors = F)
+names(busan)[1] <- "station_nm"
+
+# busan 하루 평균 이용자 수 반올림해서 정리
+
+busan$user<-round(busan$USER)
+busan <- busan[,c(-2,-3)]
+
+# 
+busan$station_nm <- gsub("역", "", busan$station_nm)
+
+#
+busan <- busan %>% group_by(station_nm) %>% summarise(user = round(sum(user)))
+
+
+
+
+#
+write.csv(busan, "subway_03_dt.csv",row.names = F)
+
+
+
+#======================================================
+# 지하철 수요 예측 모델링 [캡스톤디자인]
+#======================================================
+#======================================================
+# (변수) 지하철 역 좌표 (경도[lon], 위도[lat])
+#======================================================
+
+# 패키지 라이브러리
+library(ggmap)
+library(dplyr)
+
+# Data 불러오기
+subway_03_dt <- read.csv("subway_03_dt.csv", header = T, stringsAsFactors = F)
+
+# 검색어 word 생성 :: 지하철 이름 UTF-8 인코딩
+word <- paste(subway_03_dt$station_nm, "역", sep="")
+word <- paste("부산 ", word, sep="")
+word <- enc2utf8(word)
+
+# geocode를 이용해 경도, 위도 생성
+gc <- geocode(word)
+
+# 좌표 결측치 확인
+sum(is.na(gc[,1]))
+
+# 갱신
+word_temp <- word[is.na(gc[,1])]
+gc2 <- geocode(word_temp)
+
+gc[is.na(gc[,1]),] <- gc2
+
+
+# 좌표 합치기
+subway_03_set <- cbind(subway_03_dt, gc)
+
+# 중복 확인
+temp <- subway_03_set %>% group_by(lon, lat) %>% summarise(sum=length(station_nm))
+
+
+
+# 저장
+write.csv(gc, "gc_03.csv", row.names = F)
+write.csv(subway_03_set, "subway_03_set.csv", row.names = F)
+

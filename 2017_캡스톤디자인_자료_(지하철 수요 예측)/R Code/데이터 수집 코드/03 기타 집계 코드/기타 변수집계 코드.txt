@@ -1,0 +1,427 @@
+#============================================
+# 기타 변수 집계 통합 코드
+#============================================
+
+library(dplyr)
+library(ggmap)
+library(NISTunits)
+
+setwd("D:/Project/캡스톤디자인 프로젝트/Working Directory/subway")
+
+subway_all_set <- read.csv("bigdata_01.csv", header = T, stringsAsFactors = F)
+
+#============================================
+# var_n9 :: 초중등학교
+#============================================
+
+var <- read.csv("etc/etc01.csv", header = T, stringsAsFactors = F)
+
+str(var)
+colnames(var)
+var <- var[,c(2,17,16)]
+colnames(var) <- c("name", "lon", "lat")
+
+# 집계 프로그램
+
+variable <- var
+variable <- variable %>% group_by(lon, lat) %>% summarise(a = sum(lon))
+variable <- data.frame(lon=variable$lon, lat=variable$lat)
+
+
+# 지구 반지름 r (단위:km) 위키백과 기준
+r=6378.137
+# 지하철 역 좌표
+lon1<-NISTdegTOradian(subway_all_set$lon)
+lat1<-NISTdegTOradian(subway_all_set$lat)
+# 상가 좌표
+lon2<-NISTdegTOradian(variable$lon)
+lat2<-NISTdegTOradian(variable$lat)
+
+# 각각의 지하철 역에 대해 모든 상가와의 거리 저장
+#paste(var,"_n",sep = "") <- NA
+var_n9 <- NA
+for (i in (1:length(subway_all_set[,1]))) {
+  print(i)
+  
+  dlon<-lon2-lon1[i]
+  dlat<-lat2-lat1[i]
+  
+  a<-sin(dlat/2)^2+cos(lat1[i])*cos(lat2)*sin(dlon/2)^2
+  c<-2*atan2(sqrt(a),sqrt(1-a))
+  distance <- r*c 
+  
+  index <- distance <= 0.7
+  
+  var_n9[i] <- 
+    length(variable[index, 1])
+}
+
+
+#============================================
+# var_n10 :: 금연구역
+#============================================
+
+var <- read.csv("etc/etc02.csv", header = T, stringsAsFactors = F)
+
+str(var)
+colnames(var)
+var <- var[,c(1,14,13)]
+colnames(var) <- c("name", "lon", "lat")
+
+# 집계 프로그램
+
+variable <- var
+variable <- variable %>% group_by(lon, lat) %>% summarise(a = sum(lon))
+variable <- data.frame(lon=variable$lon, lat=variable$lat)
+
+
+# 지구 반지름 r (단위:km) 위키백과 기준
+r=6378.137
+# 지하철 역 좌표
+lon1<-NISTdegTOradian(subway_all_set$lon)
+lat1<-NISTdegTOradian(subway_all_set$lat)
+# 상가 좌표
+lon2<-NISTdegTOradian(variable$lon)
+lat2<-NISTdegTOradian(variable$lat)
+
+# 각각의 지하철 역에 대해 모든 상가와의 거리 저장
+#paste(var,"_n",sep = "") <- NA
+var_n10 <- NA
+for (i in (1:length(subway_all_set[,1]))) {
+  print(i)
+  
+  dlon<-lon2-lon1[i]
+  dlat<-lat2-lat1[i]
+  
+  a<-sin(dlat/2)^2+cos(lat1[i])*cos(lat2)*sin(dlon/2)^2
+  c<-2*atan2(sqrt(a),sqrt(1-a))
+  distance <- r*c 
+  
+  index <- distance <= 0.7
+  
+  var_n10[i] <- 
+    length(variable[index, 1])
+}
+
+
+
+
+
+#============================================
+# var_n11 :: 공공도서관
+#============================================
+
+var <- read.csv("etc/etc03.csv", header = T, stringsAsFactors = F)
+
+str(var)
+colnames(var)
+
+unique(var$도서관유형)
+
+var %>% group_by(도서관유형) %>% summarise(n = n())
+
+var <- subset(var,도서관유형 == c("공공도서관"))
+var <- var[,c(1,25,24)]
+colnames(var) <- c("name", "lon", "lat")
+
+# 집계 프로그램
+
+variable <- var
+variable <- variable %>% group_by(lon, lat) %>% summarise(a = sum(lon))
+variable <- data.frame(lon=variable$lon, lat=variable$lat)
+
+
+# 지구 반지름 r (단위:km) 위키백과 기준
+r=6378.137
+# 지하철 역 좌표
+lon1<-NISTdegTOradian(subway_all_set$lon)
+lat1<-NISTdegTOradian(subway_all_set$lat)
+# 상가 좌표
+lon2<-NISTdegTOradian(variable$lon)
+lat2<-NISTdegTOradian(variable$lat)
+
+# 각각의 지하철 역에 대해 모든 상가와의 거리 저장
+#paste(var,"_n",sep = "") <- NA
+var_n11 <- NA
+for (i in (1:length(subway_all_set[,1]))) {
+  print(i)
+  
+  dlon<-lon2-lon1[i]
+  dlat<-lat2-lat1[i]
+  
+  a<-sin(dlat/2)^2+cos(lat1[i])*cos(lat2)*sin(dlon/2)^2
+  c<-2*atan2(sqrt(a),sqrt(1-a))
+  distance <- r*c 
+  
+  index <- distance <= 0.7
+  
+  var_n11[i] <- 
+    length(variable[index, 1])
+}
+
+
+
+
+
+#============================================
+# var_n12 :: 박물관미술관
+#============================================
+
+var <- read.csv("etc/etc04.csv", header = T, stringsAsFactors = F)
+
+str(var)
+colnames(var)
+
+var <- var[,c(1,6,5)]
+colnames(var) <- c("name", "lon", "lat")
+
+# 집계 프로그램
+
+variable <- var
+variable <- variable %>% group_by(lon, lat) %>% summarise(a = sum(lon))
+variable <- data.frame(lon=variable$lon, lat=variable$lat)
+
+
+# 지구 반지름 r (단위:km) 위키백과 기준
+r=6378.137
+# 지하철 역 좌표
+lon1<-NISTdegTOradian(subway_all_set$lon)
+lat1<-NISTdegTOradian(subway_all_set$lat)
+# 상가 좌표
+lon2<-NISTdegTOradian(variable$lon)
+lat2<-NISTdegTOradian(variable$lat)
+
+# 각각의 지하철 역에 대해 모든 상가와의 거리 저장
+#paste(var,"_n",sep = "") <- NA
+var_n12 <- NA
+for (i in (1:length(subway_all_set[,1]))) {
+  print(i)
+  
+  dlon<-lon2-lon1[i]
+  dlat<-lat2-lat1[i]
+  
+  a<-sin(dlat/2)^2+cos(lat1[i])*cos(lat2)*sin(dlon/2)^2
+  c<-2*atan2(sqrt(a),sqrt(1-a))
+  distance <- r*c 
+  
+  index <- distance <= 0.7
+  
+  var_n12[i] <- 
+    length(variable[index, 1])
+}
+
+
+
+
+#============================================
+# var_n13 :: 도시공원
+#============================================
+
+var <- read.csv("etc/etc05.csv", header = T, stringsAsFactors = F)
+
+str(var)
+colnames(var)
+
+var <- var[,c(2,7,6)]
+colnames(var) <- c("name", "lon", "lat")
+
+# 집계 프로그램
+
+variable <- var
+variable <- variable %>% group_by(lon, lat) %>% summarise(a = sum(lon))
+variable <- data.frame(lon=variable$lon, lat=variable$lat)
+
+
+# 지구 반지름 r (단위:km) 위키백과 기준
+r=6378.137
+# 지하철 역 좌표
+lon1<-NISTdegTOradian(subway_all_set$lon)
+lat1<-NISTdegTOradian(subway_all_set$lat)
+# 상가 좌표
+lon2<-NISTdegTOradian(variable$lon)
+lat2<-NISTdegTOradian(variable$lat)
+
+# 각각의 지하철 역에 대해 모든 상가와의 거리 저장
+#paste(var,"_n",sep = "") <- NA
+var_n13 <- NA
+for (i in (1:length(subway_all_set[,1]))) {
+  print(i)
+  
+  dlon<-lon2-lon1[i]
+  dlat<-lat2-lat1[i]
+  
+  a<-sin(dlat/2)^2+cos(lat1[i])*cos(lat2)*sin(dlon/2)^2
+  c<-2*atan2(sqrt(a),sqrt(1-a))
+  distance <- r*c 
+  
+  index <- distance <= 0.7
+  
+  var_n13[i] <- 
+    length(variable[index, 1])
+}
+
+
+
+
+
+#============================================
+# var_n14 :: 주차장
+#============================================
+
+var <- read.csv("etc/etc06.csv", header = T, stringsAsFactors = F)
+
+str(var)
+colnames(var)
+
+var <- var[,c(2,30,29)]
+colnames(var) <- c("name", "lon", "lat")
+
+# 집계 프로그램
+
+variable <- var
+variable <- variable %>% group_by(lon, lat) %>% summarise(a = sum(lon))
+variable <- data.frame(lon=variable$lon, lat=variable$lat)
+
+
+# 지구 반지름 r (단위:km) 위키백과 기준
+r=6378.137
+# 지하철 역 좌표
+lon1<-NISTdegTOradian(subway_all_set$lon)
+lat1<-NISTdegTOradian(subway_all_set$lat)
+# 상가 좌표
+lon2<-NISTdegTOradian(variable$lon)
+lat2<-NISTdegTOradian(variable$lat)
+
+# 각각의 지하철 역에 대해 모든 상가와의 거리 저장
+#paste(var,"_n",sep = "") <- NA
+var_n14 <- NA
+for (i in (1:length(subway_all_set[,1]))) {
+  print(i)
+  
+  dlon<-lon2-lon1[i]
+  dlat<-lat2-lat1[i]
+  
+  a<-sin(dlat/2)^2+cos(lat1[i])*cos(lat2)*sin(dlon/2)^2
+  c<-2*atan2(sqrt(a),sqrt(1-a))
+  distance <- r*c 
+  
+  index <- distance <= 0.7
+  
+  var_n14[i] <- 
+    length(variable[index, 1])
+}
+
+
+
+
+#============================================
+# var_n15 :: 무료와이파이존
+#============================================
+var <- read.csv("etc/etc07.csv", header = T, stringsAsFactors = F)
+
+str(var)
+colnames(var)
+
+var <- var[,c(1,14,13)]
+colnames(var) <- c("name", "lon", "lat")
+
+# 집계 프로그램
+
+variable <- var
+variable <- variable %>% group_by(lon, lat) %>% summarise(a = sum(lon))
+variable <- data.frame(lon=variable$lon, lat=variable$lat)
+
+
+# 지구 반지름 r (단위:km) 위키백과 기준
+r=6378.137
+# 지하철 역 좌표
+lon1<-NISTdegTOradian(subway_all_set$lon)
+lat1<-NISTdegTOradian(subway_all_set$lat)
+# 상가 좌표
+lon2<-NISTdegTOradian(variable$lon)
+lat2<-NISTdegTOradian(variable$lat)
+
+# 각각의 지하철 역에 대해 모든 상가와의 거리 저장
+#paste(var,"_n",sep = "") <- NA
+var_n15 <- NA
+for (i in (1:length(subway_all_set[,1]))) {
+  print(i)
+  
+  dlon<-lon2-lon1[i]
+  dlat<-lat2-lat1[i]
+  
+  a<-sin(dlat/2)^2+cos(lat1[i])*cos(lat2)*sin(dlon/2)^2
+  c<-2*atan2(sqrt(a),sqrt(1-a))
+  distance <- r*c 
+  
+  index <- distance <= 0.7
+  
+  var_n15[i] <- 
+    length(variable[index, 1])
+}
+
+
+
+
+
+#============================================
+# var_n16 :: CCTV
+#============================================
+
+var <- read.csv("etc/etc08.csv", header = T, stringsAsFactors = F)
+
+str(var)
+colnames(var)
+
+var <- var[,c(1,12,11)]
+colnames(var) <- c("name", "lon", "lat")
+
+# 집계 프로그램
+
+variable <- var
+variable <- variable %>% group_by(lon, lat) %>% summarise(a = sum(lon))
+variable <- data.frame(lon=variable$lon, lat=variable$lat)
+
+
+# 지구 반지름 r (단위:km) 위키백과 기준
+r=6378.137
+# 지하철 역 좌표
+lon1<-NISTdegTOradian(subway_all_set$lon)
+lat1<-NISTdegTOradian(subway_all_set$lat)
+# 상가 좌표
+lon2<-NISTdegTOradian(variable$lon)
+lat2<-NISTdegTOradian(variable$lat)
+
+# 각각의 지하철 역에 대해 모든 상가와의 거리 저장
+#paste(var,"_n",sep = "") <- NA
+var_n16 <- NA
+for (i in (1:length(subway_all_set[,1]))) {
+  print(i)
+  
+  dlon<-lon2-lon1[i]
+  dlat<-lat2-lat1[i]
+  
+  a<-sin(dlat/2)^2+cos(lat1[i])*cos(lat2)*sin(dlon/2)^2
+  c<-2*atan2(sqrt(a),sqrt(1-a))
+  distance <- r*c 
+  
+  index <- distance <= 0.7
+  
+  var_n16[i] <- 
+    length(variable[index, 1])
+}
+
+
+
+#==============================================
+
+# 데이터 셋에 변수 추가
+
+#==============================================
+subway_all_set <- cbind(subway_all_set, var_n9, var_n10, var_n11, 
+                        var_n12, var_n13, var_n14, var_n15, var_n16)
+
+
+write.csv(subway_all_set, "bigdata_02.csv", row.names = F)
+
+

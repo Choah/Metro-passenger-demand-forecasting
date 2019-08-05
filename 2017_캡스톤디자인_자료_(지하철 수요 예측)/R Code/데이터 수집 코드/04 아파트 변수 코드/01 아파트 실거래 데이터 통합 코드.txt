@@ -1,0 +1,195 @@
+#========================================================
+# 지하철 역 별 부동산 실거래가 통합
+#========================================================
+
+# 워킹 디렉토리 설정
+setwd("D:/Project/캡스톤디자인 프로젝트/Working Directory/subway")
+getwd()
+
+# 데이터 시트 불러오기
+subway_all_set<-read.csv("bigdata_02.csv",header=T)
+
+# 경기 실거래가 데이터 불러오기
+kg <- NA;kg <- na.omit(kg)
+for (i in 1:12){
+  print(i)
+  name <- paste("경기", i, sep="")
+  name <- paste(name, "실", sep="")
+  csv <- paste(name, ".csv", sep="")
+  url <- paste("실거래가/", csv, sep="")
+  kg_new <- read.csv(url, skip=6, header = T, stringsAsFactors = F)
+  kg <- rbind(kg, kg_new)
+}
+
+# 서울 실거래가 데이터 불러오기
+se <- NA;se <- na.omit(se)
+for (i in 1:12){
+  print(i)
+  name <- paste("서울", i, sep="")
+  name <- paste(name, "실", sep="")
+  csv <- paste(name, ".csv", sep="")
+  url <- paste("실거래가/", csv, sep="")
+  se_new <- read.csv(url, skip=6, header = T, stringsAsFactors = F)
+  se <- rbind(se, se_new)
+}
+
+# 인천 실거래가 데이터 불러오기
+ic <- NA;ic <- na.omit(ic)
+for (i in 1:12){
+  print(i)
+  name <- paste("인천", i, sep="")
+  name <- paste(name, "실", sep="")
+  csv <- paste(name, ".csv", sep="")
+  url <- paste("실거래가/", csv, sep="")
+  ic_new <- read.csv(url, skip=6, header = T, stringsAsFactors = F)
+  ic <- rbind(ic, ic_new)
+}
+
+# 부산 실거래가 데이터 불러오기
+bs <- NA;bs <- na.omit(bs)
+for (i in 1:12){
+  print(i)
+  name <- paste("부산", i, sep="")
+  name <- paste(name, "실", sep="")
+  csv <- paste(name, ".csv", sep="")
+  url <- paste("실거래가/", csv, sep="")
+  bs_new <- read.csv(url, skip=6, header = T, stringsAsFactors = F)
+  bs <- rbind(bs, bs_new)
+}
+
+# 대구 실거래가 데이터 불러오기
+dg <- NA;dg <- na.omit(dg)
+for (i in 1:12){
+  print(i)
+  name <- paste("대구", i, sep="")
+  name <- paste(name, "실", sep="")
+  csv <- paste(name, ".csv", sep="")
+  url <- paste("실거래가/", csv, sep="")
+  dg_new <- read.csv(url, skip=6, header = T, stringsAsFactors = F)
+  dg <- rbind(dg, dg_new)
+}
+
+# 강원 실거래가 데이터 불러오기
+gw <- NA;gw <- na.omit(gw)
+for (i in 1:12){
+  print(i)
+  name <- paste("강원", i, sep="")
+  name <- paste(name, "실", sep="")
+  csv <- paste(name, ".csv", sep="")
+  url <- paste("실거래가/", csv, sep="")
+  gw_new <- read.csv(url, skip=6, header = T, stringsAsFactors = F)
+  gw <- rbind(gw, gw_new)
+}
+
+# 광주 실거래가 데이터 불러오기
+gj <- NA;gj <- na.omit(gj)
+for (i in 1:12){
+  print(i)
+  name <- paste("광주", i, sep="")
+  name <- paste(name, "실", sep="")
+  csv <- paste(name, ".csv", sep="")
+  url <- paste("실거래가/", csv, sep="")
+  gj_new <- read.csv(url, skip=6, header = T, stringsAsFactors = F)
+  gj <- rbind(gj, gj_new)
+}
+
+
+
+# 충남 실거래가 데이터 불러오기
+cn <- NA;cn <- na.omit(cn)
+for (i in 1:12){
+  print(i)
+  name <- paste("충남", i, sep="")
+  name <- paste(name, "실", sep="")
+  csv <- paste(name, ".csv", sep="")
+  url <- paste("실거래가/", csv, sep="")
+  cn_new <- read.csv(url, skip=6, header = T, stringsAsFactors = F)
+  cn <- rbind(cn, cn_new)
+}
+
+# 대전 실거래가 데이터 불러오기
+dj <- NA;dj <- na.omit(dj)
+for (i in 1:12){
+  print(i)
+  name <- paste("대전", i, sep="")
+  name <- paste(name, "실", sep="")
+  csv <- paste(name, ".csv", sep="")
+  url <- paste("실거래가/", csv, sep="")
+  dj_new <- read.csv(url, skip=6, header = T, stringsAsFactors = F)
+  dj <- rbind(dj, dj_new)
+}
+
+
+#---------------------------------------------
+#  경기 kg  #  서울 se  #  인천 ic  #  강원 gw
+#  대전 dj  #  대구 dg  #  부산 bs  #  광주 gj
+#  충남 cn    
+#---------------------------------------------
+
+# 전국 실거래가 통합 데이터 생성
+house <- rbind(kg, se, ic, gw, dj, dg, bs, gj, cn)
+colnames(house)[6] <- "price"
+
+house$price <- gsub(",", "", house$price)
+house$price <- as.numeric(house$price)
+
+head(house)
+colnames(house)
+
+house <- house[ ,c(1,2,3,4,6)]
+
+summary(house$전용면적...)
+
+# 전용면적 기준 
+unique(house$전용면적...)
+length(house[house$전용면적...>=59.56 & house$전용면적...<=84.96, 1])
+summary(house$전용면적...)
+
+# 사분위수 범위 추출
+house_size<-house[house$전용면적...>=59.56 & house$전용면적... <=84.96, ]
+
+
+# 전국 부동산 가격 통합 데이터 house.csv 생성
+write.csv(house_size,"실거래가/house_size.csv", row.names = F)
+write.csv(house, "실거래가/total_house.csv", row.names = F)
+
+
+
+
+#####################################################
+
+## 세종 실거래가 데이터 불러오기
+#sj <- NA;sj <- na.omit(sj)
+#for (i in 1:12){
+#  print(i)
+#  name <- paste("세종", i, sep="")
+#  name <- paste(name, "실", sep="")
+#  csv <- paste(name, ".csv", sep="")
+#  url <- paste("실거래가/", csv, sep="")
+#  sj_new <- read.csv(url, skip=6, header = T, stringsAsFactors = F)
+#  sj <- rbind(sj, sj_new)
+#}
+
+## 충북 실거래가 데이터 불러오기
+#cb <- NA;cb <- na.omit(cb)
+#for (i in 1:12){
+#  print(i)
+#  name <- paste("충북", i, sep="")
+#  name <- paste(name, "실", sep="")
+#  csv <- paste(name, ".csv", sep="")
+#  url <- paste("실거래가/", csv, sep="")
+#  cb_new <- read.csv(url, skip=6, header = T, stringsAsFactors = F)
+#  cb <- rbind(cb, cb_new)
+#}
+
+## 전북 실거래가 데이터 불러오기
+#jb <- NA;jb <- na.omit(jb)
+#for (i in 1:12){
+#  print(i)
+#  name <- paste("전북", i, sep="")
+#  name <- paste(name, "실", sep="")
+#  csv <- paste(name, ".csv", sep="")
+#  url <- paste("실거래가/", csv, sep="")
+#  jb_new <- read.csv(url, skip=6, header = T, stringsAsFactors = F)
+#  jb <- rbind(jb, jb_new)
+#}

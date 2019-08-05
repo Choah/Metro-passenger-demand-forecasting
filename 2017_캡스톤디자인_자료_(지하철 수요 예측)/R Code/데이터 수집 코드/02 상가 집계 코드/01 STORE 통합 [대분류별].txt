@@ -1,0 +1,97 @@
+#===================================
+# 상가 데이터 통합 데이터 시트 구성
+#===================================
+
+setwd("D:/Project/캡스톤디자인 프로젝트/Working Directory/subway")
+getwd()
+
+store01 <- read.csv("store/store01.csv", header = T, stringsAsFactors = F)
+store02 <- read.csv("store/store02.csv", header = T, stringsAsFactors = F)
+store03 <- read.csv("store/store03.csv", header = T, stringsAsFactors = F)
+store04 <- read.csv("store/store04.csv", header = T, stringsAsFactors = F)
+
+names(store01)
+
+store01 <- store01[,c(2,3,5,7,9,32,38,39)]
+store02 <- store02[,c(2,3,5,7,9,32,38,39)]
+store03 <- store03[,c(2,3,5,7,9,32,38,39)]
+store04 <- store04[,c(2,3,5,7,9,32,38,39)]
+
+store <- rbind(store01, store02, store03, store04)
+
+# store 변수명 재지정하기
+
+colnames(store) <- c("brand_nm","branch_nm","main_cg","middle_cg","small_cg","address","lon","lat")
+head(store)
+
+# store.csv 생성 :: 전국 상가 데이터
+write.csv(store, "store.csv", row.names = F)
+
+
+
+
+#--------------------------------------------------------------
+
+
+
+
+#============================================
+# STORE 전국 상가 데이터 불러오기
+#============================================
+library(dplyr)
+store <- read.csv("store.csv", header = T, stringsAsFactors = F)
+
+
+colnames(store)
+
+# 대분류 11개
+# 음식  생활서비스  소매
+# 관광/여가/오락  학문/교육 의료
+# 부동산  숙박  전자/정보통신
+# 도매/유통/무역 1차산업
+
+# 중분류 94개
+# 소분류 717개
+
+unique(store$main_cg)
+unique(store$middle_cg)
+unique(store$small_cg)
+
+
+
+
+
+#============================================
+# 개별 상가 데이터 생성
+#============================================
+
+# ▶ 대분류 필터링
+
+main_01 <- store %>% filter(main_cg=="음식")
+main_02 <- store %>% filter(main_cg=="생활서비스")
+main_03 <- store %>% filter(main_cg=="소매")
+main_04 <- store %>% filter(main_cg=="관광/여가/오락")
+main_05 <- store %>% filter(main_cg=="학문/교육")
+main_06 <- store %>% filter(main_cg=="의료")
+main_07 <- store %>% filter(main_cg=="부동산")
+main_08 <- store %>% filter(main_cg=="숙박")
+
+# 관측치 1개씩 밖에 없으므로 아래 대분류는 제외
+
+# main09 <- store %>% filter(main_cg=="전자/정보통신")
+# main10 <- store %>% filter(main_cg=="도매/유통/무역")
+# main11 <- store %>% filter(main_cg=="1차산업")
+
+
+
+write.csv(main_01, "main_01.csv", row.names = F)
+write.csv(main_02, "main_02.csv", row.names = F)
+write.csv(main_03, "main_03.csv", row.names = F)
+write.csv(main_04, "main_04.csv", row.names = F)
+write.csv(main_05, "main_05.csv", row.names = F)
+write.csv(main_06, "main_06.csv", row.names = F)
+write.csv(main_07, "main_07.csv", row.names = F)
+write.csv(main_08, "main_08.csv", row.names = F)
+
+
+

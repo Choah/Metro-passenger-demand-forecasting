@@ -1,0 +1,38 @@
+
+#===============================
+# 지하철 역 이미지 저장하기
+#===============================
+setwd("D:/Project/캡스톤디자인 프로젝트/Working Directory/subway")
+library(ggmap)
+library(grDevices)
+
+#
+subway <- read.csv("subway_all_set.csv", header = T, stringsAsFactors = F)
+cen <- subway[,c(3,4)]
+
+# 지하철 역 이미지 저장 코드
+
+for (i in 1:length(subway$station_nm)){
+  
+  map <- get_googlemap(center = c(lon = cen$lon[i], lat = cen$lat[i]),
+                       maptype="satellite",
+                       zoom = 16
+  )
+  gmap <- ggmap(map, extent = "device")
+  gmap
+  
+  data <- gmap
+  path <- "image/"
+  url <- paste(i, "_", sep = "")
+  url <- paste(url, subway$station_nm[i],sep="")
+  url <- paste(url, ".jpg",sep = "")
+  path <- paste(path, url, sep="")
+  
+  jpeg(path)
+  plot(data)
+  dev.off()
+  
+}
+
+
+

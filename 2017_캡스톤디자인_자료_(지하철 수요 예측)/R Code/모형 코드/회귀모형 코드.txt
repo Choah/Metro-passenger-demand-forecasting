@@ -1,0 +1,105 @@
+
+#================================================
+# 다중회귀분석 Multiple Linear Regression
+# (변수선택) 모든 변수 선택
+#================================================
+setwd("D:/Project/캡스톤디자인 프로젝트/Working Directory/subway")
+subway <- read.csv("bigdata_03.csv", header=T, stringsAsFactors = F)
+
+
+fit = lm(user ~ var_n1 + var_n2 + var_n3 + var_n4 + 
+           var_n5 + var_n6 + var_n7 + var_n8 + 
+           var_n9 + var_n10 + var_n11 + var_n12 + 
+           var_n13 + var_n14 + var_n15 + var_n16 + var_n17,
+         data = subway)
+
+anova(fit)
+summary(fit)
+
+#==============================================================
+# 다중공선성 확인
+#==============================================================
+library(corrplot)
+
+str(subway)
+
+M <- cor(subway[,5:22])
+M
+corrplot(M,method="ellipse")
+
+
+
+
+
+
+##
+fit2 = lm(log(user) ~ sqrt(var_n1) + sqrt(var_n2) + sqrt(var_n3) + sqrt(var_n4) + 
+            sqrt(var_n5) + sqrt(var_n6) + sqrt(var_n7) + sqrt(var_n8) + 
+            sqrt(var_n9) + sqrt(var_n10) + sqrt(var_n11) + sqrt(var_n12) + 
+            sqrt(var_n13) + sqrt(var_n14) + sqrt(var_n15) + sqrt(var_n16) + sqrt(var_n17),
+          data = subway)
+
+anova(fit2)
+summary(fit2)
+
+
+
+
+# ROOT VIF 2 이상 제거
+
+library(car)
+vif(fit2)
+sqrt(vif(fit2))>2
+
+# 학습 vs 검정 분류
+set.seed(20180423)
+x <- sample(1:nrow(subway), 0.7*nrow(subway)) # 전체 관측치의 70% 랜덤 추출
+train <- subway[x,] # 학습데이터 추출
+test <- subway[-x,] # 검증데이터 추출
+
+# 공선성 변수 var_n1 ~ var_n7 제거 후 회귀분석
+fit_new = lm(log(user) ~ sqrt(var_n8) + sqrt(var_n9) + sqrt(var_n10) + sqrt(var_n11) + sqrt(var_n12) + 
+               sqrt(var_n13) + sqrt(var_n14) + sqrt(var_n15) + sqrt(var_n16) + sqrt(var_n17),
+             data = train)
+
+summary(fit_new)
+#F-test : 모형 유의
+#R2 : 0.4 설명력 좋음
+#계수 : 유의
+
+
+vif(fit_new)
+
+
+
+# (변수선택) 단계선택법 Stepwise
+
+fit3 = step(fit_new, direction = "both")
+summary(fit3)
+
+
+# 예측
+pred <- predict(fit3, test)
+
+pred
+log(test$user)
+
+# 예측값, 실제값 데이터프레임 구성
+prediction <- data.frame(real = log(test$user), pred = pred)
+
+## 예측값, 실제값 비교 [산점도]
+library(ggplot2)
+ggplot(data=prediction, aes(x=real, y = pred)) + geom_point(shape=15, size=1, colour="darkblue")+geom_smooth(method = "lm")
+
+#
+par(mfrow=c(2,2))
+plot(fit_new)
+par(mfrow=c(1,1))
+
+
+
+
+
+
+
+
